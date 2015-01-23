@@ -34,8 +34,6 @@ files.mri_segmented = fullfile(mri_folder, [mri_name '_mri_segmented.mat']);
 files.mri_headmodel = fullfile(...
     cfg.folder, ['mri_vol_' cfg.ft_prepare_headmodel.method '.mat']);
 
-files.elec_aligned = fullfile(cfg.folder, 'elec_aligned.mat');
-
 %% Segment the MRI
 
 % Read the MRI
@@ -63,40 +61,6 @@ if ~exist(cfgin.outputfile, 'file')
     vol = ft_prepare_headmodel(cfgin, data);
     save(cfgin.outputfile, 'vol');
 end
-
-%% Automatic alignment
-% Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
-cfgin = [];
-cfgin.mri_file = files.mri_mat;
-cfgin.elec_file = cfg.elec_file;
-cfgin.outputfile = files.elec_aligned;
-elec_alignment_auto(cfgin);
-
-%% Visualization - check alignment
-figure;
-cfgin = [];
-cfgin.headmodel_file = files.mri_headmodel;
-cfgin.elec_file = files.elec_aligned;
-vis_check_alignment(cfgin);
-
-%% Interactive alignment
-prompt = 'How''s it looking? Need manual alignment? (Y/n)';
-response = input(prompt, 's');
-if isequal(response, 'Y')
-    % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
-    cfgin = [];
-    cfgin.headmodel_file = files.mri_headmodel;
-    cfgin.elec_file = files.elec_aligned;
-    cfgin.outputfile = files.elec_aligned;
-    elec_alignment_interactive(cfgin);
-end
-
-%% Visualization - check alignment
-figure;
-cfgin = [];
-cfgin.headmodel_file = files.mri_headmodel;
-cfgin.elec_file = files.elec_aligned;
-vis_check_alignment(cfgin);
 
 %% Copy file names to the config
 cfg.files = files;

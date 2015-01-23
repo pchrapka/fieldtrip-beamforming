@@ -4,7 +4,7 @@ function align_electrodes(cfg)
 %
 %   Input
 %   -----
-%   cfg.elec_file
+%   cfg.files.elec_file
 %       electrode location file
 %   cfg.outputfile
 %       output file name
@@ -12,17 +12,18 @@ function align_electrodes(cfg)
 %       type of alignment: 'fiducial', 'interactive'
 %
 %   'fiducial'
-%   cfg.mri_file
+%   cfg.files.mri OR
+%   cfg.files.mri_mat
 %       MRI file for head model, either '.mri' or matlab file containing
 %       output from ft_read_mri
 %
 %   'interactive'
-%   cfg.headmodel_file
+%   cfg.files.mri_headmodel
 
 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
 
 % Load electrodes
-elec = ftb.util.loadvar(cfg.elec_file);
+elec = ftb.util.loadvar(cfg.files.elec_file);
 
 switch cfg.type
     
@@ -30,11 +31,10 @@ switch cfg.type
         %% Fiducial alignment
         
         % Load MRI data
-        [~,~,ext] = fileparts(cfg.mri_file);
-        if isequal(ext, '.mat')
-            mri = ftb.util.loadvar(cfg.mri_file);
+        if isfield(cfg.files, 'mri_mat')
+            mri = ftb.util.loadvar(cfg.files.mri_mat);
         else
-            mri = ft_read_mri(cfg.mri_file);
+            mri = ft_read_mri(cfg.files.mri);
         end
         
         % Get landmark coordinates
@@ -64,7 +64,7 @@ switch cfg.type
     case 'interactive'
         %% Interactive alignment
         
-        vol = ftb.util.loadvar(cfg.headmodel_file);
+        vol = ftb.util.loadvar(cfg.files.mri_headmodel);
         
         cfgin           = [];
         cfgin.method    = 'interactive';

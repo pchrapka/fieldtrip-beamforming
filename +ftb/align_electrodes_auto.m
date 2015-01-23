@@ -30,36 +30,33 @@ save(cfg.files.elec, 'elec');
 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
 cfgin = [];
 cfgin.type = 'fiducial';
-cfgin.elec_file = cfg.files.elec;
-cfgin.mri_file = cfg.files.mri_mat;
+cfgin.files = cfg.files;
 cfgin.outputfile = cfg.files.elec_aligned;
 ftb.align_electrodes(cfgin);
 
 %% Visualization - check alignment
-figure;
+h = figure;
 cfgin = [];
-cfgin.headmodel_file = cfg.files.mri_headmodel;
-cfgin.elec_file = cfg.files.elec_aligned;
-vis_check_alignment(cfgin);
+cfgin.files = cfg.files;
+ftb.vis_check_alignment(cfgin);
 
 %% Interactive alignment
 prompt = 'How''s it looking? Need manual alignment? (Y/n)';
 response = input(prompt, 's');
 if isequal(response, 'Y')
+    close(h);
     % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
     cfgin = [];
     cfgin.type = 'interactive';
-    cfgin.headmodel_file = cfg.files.mri_headmodel;
-    cfgin.elec_file = cfg.files.elec_aligned;
+    cfgin.files = cfg.files;
     cfgin.outputfile = cfg.files.elec_aligned;
     ftb.align_electrodes(cfgin);
 end
 
 %% Visualization - check alignment
-figure;
+h = figure;
 cfgin = [];
-cfgin.headmodel_file = cfg.files.mri_headmodel;
-cfgin.elec_file = cfg.files.elec_aligned;
-vis_check_alignment(cfgin);
+cfgin.files = cfg.files;
+ftb.vis_check_alignment(cfgin);
 
 end

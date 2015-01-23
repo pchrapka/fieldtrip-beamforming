@@ -4,7 +4,7 @@ function cfg = align_electrodes_auto(cfg)
 %
 %   Input
 %   -----
-%   cfg.elec_file
+%   cfg.files.elec_orig
 %       electrode location file
 %   cfg.folder
 %       output folder for head model data
@@ -22,6 +22,8 @@ if ~isfield(cfg, 'force'), cfg.force = false; end
 
 cfg.files.elec = fullfile(cfg.folder, 'elec.mat');
 cfg.files.elec_aligned = fullfile(cfg.folder, 'elec_aligned.mat');
+%% Save the config
+ftb.save_config(cfg);
 
 % Check if we're setting up a head model from scratch
 if exist(cfg.files.elec_aligned, 'file') && ~cfg.force
@@ -32,7 +34,7 @@ end
 
 %% Load electrode data
 if ~exist(cfg.files.elec, 'file')
-    elec = ft_read_sens(cfg.elec_file);
+    elec = ft_read_sens(cfg.files.elec_orig);
     % Ensure electrode coordinates are in mm
     elec = ft_convert_units(elec, 'mm'); % should be the same unit as MRI
     % Save
@@ -64,6 +66,8 @@ if isequal(response, 'Y')
     cfgin = [];
     cfgin.type = 'interactive';
     cfgin.files = cfg.files;
+    % Use the automatically aligned file
+    cfgin.files.elec = cfg.files.elec_aligned;
     cfgin.outputfile = cfg.files.elec_aligned;
     ftb.align_electrodes(cfgin);
 end
@@ -73,5 +77,8 @@ h = figure;
 cfgin = [];
 cfgin.files = cfg.files;
 ftb.vis_check_alignment(cfgin);
+
+%% Save the config
+ftb.save_config(cfg);
 
 end

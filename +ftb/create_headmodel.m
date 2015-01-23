@@ -4,7 +4,10 @@ function cfg = create_headmodel(cfg)
 %   -----
 %   cfg.mri_data
 %       MRI file for head model
+%   cfg.name.headmodel
+%       head model name
 %   cfg.folder
+%       (optional, default = 'output/stage1_headmodel/shortname')
 %       output folder for head model data
 %   cfg.ft_volumesegment
 %       options for ft_volumesegment, see ft_volumesegment
@@ -14,6 +17,13 @@ function cfg = create_headmodel(cfg)
 %   Output
 %   ------
 %   cfg.files
+
+cfg.name.full = cfg.name.headmodel;
+
+% Set up default output folder
+if ~isfield(cfg, 'folder') || isempty(cfg.folder)
+    cfg.folder = fullfile('output', 'stage1_headmodel', cfg.name.headmodel);
+end
 
 
 % Set up the head model output folder
@@ -70,5 +80,8 @@ end
 
 %% Copy file names to the config
 cfg.files = files;
+
+%% Save the config
+ftb.save_config(cfg);
 
 end

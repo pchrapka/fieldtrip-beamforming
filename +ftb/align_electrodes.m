@@ -23,7 +23,7 @@ function align_electrodes(cfg)
 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
 
 % Load electrodes
-elec = ftb.util.loadvar(cfg.files.elec_file);
+elec = ftb.util.loadvar(cfg.files.elec);
 
 switch cfg.type
     
@@ -59,7 +59,7 @@ switch cfg.type
         cfgin.template      = fid;                   % see above
         cfgin.elec          = elec;
         cfgin.fiducial      = {'FidNz','FidT9','FidT10'};  % labels of fiducials in fid and in elec
-        elec_aligned      = ft_electroderealign(cfgin);
+        elec      = ft_electroderealign(cfgin);
         
     case 'interactive'
         %% Interactive alignment
@@ -74,7 +74,7 @@ switch cfg.type
         else
             cfgin.headshape = vol.bnd(1);
         end
-        elec_aligned  = ft_electroderealign(cfgin);
+        elec  = ft_electroderealign(cfgin);
         
     otherwise
         error(['ftb:' mfilename],...
@@ -83,6 +83,6 @@ switch cfg.type
 end
 
 % Save
-save(cfg.outputfile, 'elec_aligned');
+save(cfg.outputfile, 'elec');
 
 end

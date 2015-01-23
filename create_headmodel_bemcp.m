@@ -5,7 +5,7 @@ cfg.ft_prepare_headmodel.method = 'bemcp';
 
 headmodel_dir = ['elec256_' method];
 cfg.mri_data = fullfile('anatomy','Subject01','Subject01.mri');
-cfg.folder = fullfile('stage1_headmodel', headmodel_dir);
+cfg.folder = fullfile('output', 'stage1_headmodel', headmodel_dir);
 
 %% Create head model
 cfg = ftb.create_headmodel(cfg);

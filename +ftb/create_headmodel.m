@@ -42,6 +42,8 @@ cfgin.inputfile = files.mri;
 cfgin.outputfile = files.mri_mat;
 if ~exist(cfgin.outputfile,'file')
     ft_read_mri_mat(cfg);
+else
+    fprintf('%s: skipping ft_read_mri_mat, already exists\n',mfilename);
 end
 
 % Segment the MRI data
@@ -50,6 +52,8 @@ cfgin.inputfile = files.mri_mat;
 cfgin.outputfile = files.mri_segmented;
 if ~exist(cfgin.outputfile,'file')
     ft_volumesegment(cfg);
+else
+    fprintf('%s: skipping ft_volumesegment, already exists\n',mfilename);
 end
 
 %% Create the head model from the segmented data
@@ -60,6 +64,8 @@ if ~exist(cfgin.outputfile, 'file')
     data = ftb.util.loadvar(files.mri_segmented);
     vol = ft_prepare_headmodel(cfgin, data);
     save(cfgin.outputfile, 'vol');
+else
+    fprintf('%s: skipping ft_prepare_headmodel, already exists\n',mfilename);
 end
 
 %% Copy file names to the config

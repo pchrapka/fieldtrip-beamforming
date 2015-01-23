@@ -10,21 +10,36 @@ function cfg = align_electrodes_auto(cfg)
 %       output folder for head model data
 %   cfg.files
 %       output files from create_headmodel
+%   cfg.force
+%       force recomputation, default = false
 %
 %   Output
 %   ------
 %   cfg.files
 
+if ~isfield(cfg, 'force'), cfg.force = false; end
+
 
 cfg.files.elec = fullfile(cfg.folder, 'elec.mat');
 cfg.files.elec_aligned = fullfile(cfg.folder, 'elec_aligned.mat');
 
+% Check if we're setting up a head model from scratch
+if exist(cfg.files.elec_aligned, 'file') && ~cfg.force
+    % Return if it already exists
+    fprintf('%s: skipping %s, already exists\n', mfilename, mfilename);
+    return
+end
+
 %% Load electrode data
-elec = ft_read_sens(cfg.elec_file);
-% Ensure electrode coordinates are in mm
-elec = ft_convert_units(elec, 'mm'); % should be the same unit as MRI
-% Save
-save(cfg.files.elec, 'elec');
+if ~exist(cfg.files.elec, 'file')
+    elec = ft_read_sens(cfg.elec_file);
+    % Ensure electrode coordinates are in mm
+    elec = ft_convert_units(elec, 'mm'); % should be the same unit as MRI
+    % Save
+    save(cfg.files.elec, 'elec');
+else
+    fprintf('%s: skipping ft_read_sens, already exists\n',mfilename);
+end
 
 %% Automatic alignment
 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg

@@ -4,8 +4,11 @@ function cfg = create_headmodel(cfg)
 %   -----
 %   cfg.mri_data
 %       MRI file for head model
-%   cfg.name.headmodel
+%   cfg.stage
+%       struct of short names for each pipeline stage
+%   cfg.stage.headmodel
 %       head model name
+%
 %   cfg.folder
 %       (optional, default = 'output/stage1_headmodel/shortname')
 %       output folder for head model data
@@ -18,18 +21,13 @@ function cfg = create_headmodel(cfg)
 %   ------
 %   cfg.files
 
-cfg.name.full = cfg.name.headmodel;
+if ~isfield(cfg, 'force'), cfg.force = false; end
 
-% Set up default output folder
-if ~isfield(cfg, 'folder') || isempty(cfg.folder)
-    cfg.folder = fullfile('output', 'stage1_headmodel', cfg.name.headmodel);
-end
+% Populate the stage information
+cfg = ftb.get_stage(cfg);
 
-
-% Set up the head model output folder
-if ~exist(cfg.folder, 'dir')
-    mkdir(cfg.folder);
-end
+% Set up the output folder
+cfg = ftb.setup_folder(cfg);
 
 %% Set up file names
 files = [];

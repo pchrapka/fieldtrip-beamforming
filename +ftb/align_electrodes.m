@@ -10,20 +10,15 @@ function align_electrodes(cfg)
 %       output file name
 %   cfg.type
 %       type of alignment: 'fiducial', 'interactive'
-%
-%   'fiducial'
-%   cfg.files.mri OR
-%   cfg.files.mri_mat
-%       MRI file for head model, either '.mri' or matlab file containing
-%       output from ft_read_mri
-%
-%   'interactive'
-%   cfg.files.mri_headmodel
+%   cfg.stage.headmodel
+%       short name of head model
 
 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
 
 % Load electrodes
 elec = ftb.util.loadvar(cfg.files.elec);
+% Load head model data
+cfghm = ftb.load_config(cfg.stage.headmodel);
 
 switch cfg.type
     
@@ -31,10 +26,10 @@ switch cfg.type
         %% Fiducial alignment
         
         % Load MRI data
-        if isfield(cfg.files, 'mri_mat')
-            mri = ftb.util.loadvar(cfg.files.mri_mat);
+        if isfield(cfghm.files, 'mri_mat')
+            mri = ftb.util.loadvar(cfghm.files.mri_mat);
         else
-            mri = ft_read_mri(cfg.files.mri);
+            mri = ft_read_mri(cfghm.files.mri);
         end
         
         % Get landmark coordinates
@@ -44,9 +39,9 @@ switch cfg.type
         
         transm=mri.transform;
         
-        nas=warp_apply(transm,nas, 'homogenous');
-        lpa=warp_apply(transm,lpa, 'homogenous');
-        rpa=warp_apply(transm,rpa, 'homogenous');
+        nas=ft_warp_apply(transm,nas, 'homogenous');
+        lpa=ft_warp_apply(transm,lpa, 'homogenous');
+        rpa=ft_warp_apply(transm,rpa, 'homogenous');
         
         % create a structure similar to a template set of electrodes
         fid.chanpos       = [nas; lpa; rpa];       % ctf-coordinates of fiducials
@@ -64,7 +59,7 @@ switch cfg.type
     case 'interactive'
         %% Interactive alignment
         
-        vol = ftb.util.loadvar(cfg.files.mri_headmodel);
+        vol = ftb.util.loadvar(cfghm.files.mri_headmodel);
         
         cfgin           = [];
         cfgin.method    = 'interactive';

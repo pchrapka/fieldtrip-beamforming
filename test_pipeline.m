@@ -1,17 +1,30 @@
 %% Stage 1
 % Create a bemcp head model
-create_HMbemcp256
+create_HMbemcp
 
 %% Stage 2
-
-% Create leadfield
-create_HMbemcp256_L10mm
+% Create aligned electrodes
+create_HMbemcp_E256
 
 %% Stage 3
-% Create simulated data
-% create_HMbemcp256_L10mm_SM1
+% Create leadfield
+% create_HMbemcp_E256_L10mm
+% create_HMbemcp_E256_Llinx10mm
+create_HMbemcp_E256_Lliny10mm
+
+cfgin = [];
+cfgin.stage.headmodel = 'HMbemcp';
+cfgin.stage.electrodes = 'E256';
+cfgin.stage.leadfield = 'Lliny10mm';
+cfgin.elements = {'electrodes', 'volume', 'leadfield'};
+ftb.vis_headmodel_elements(cfgin);
 
 %% Stage 4
+% Create simulated data
+% create_HMbemcp_E256_L10mm_SM1
+% TODO Dependent on leadfield?
+
+%% Stage 5
 % Source localization
-% create_HMbemcp256_L10mm_SM1_BF1
-% create_HMbemcp256_L10mm_SM1_BF2
+% create_HMbemcp_E256_L10mm_SM1_BF1
+% create_HMbemcp_E256_L10mm_SM1_BF2

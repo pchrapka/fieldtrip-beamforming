@@ -5,6 +5,6 @@ if ~exist(outdir, 'dir')
     mkdir(outdir);
 end
 
-save(fullfile(outdir, [cfg.name.full '.mat']), 'cfg');
+save(fullfile(outdir, [cfg.stage.full '.mat']), 'cfg');
 
 end

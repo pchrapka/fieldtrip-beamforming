@@ -1,11 +1,20 @@
-function cfg = align_electrodes_auto(cfg)
-% align_electrodes_auto automated alignment of electrodes. It aligns the
-% fiducials first, then asks if more manual alignment is necessary.
+function cfg = create_electrodes(cfg)
+% create_electrodes adds electrodes to a head model. includes automated
+% alignment of electrodes. it aligns the fiducials first, then asks if more
+% manual alignment is necessary.
 %
 %   Input
 %   -----
-%   cfg.files.elec_orig
+%   cfg.stage
+%       struct of short names for each pipeline stage
+%   cfg.stage.headmodel
+%       head model name
+%   cfg.stage.electrodes
+%       electrode configuration name
+%
+%   cfg.elec_orig
 %       electrode location file
+%
 %   cfg.folder
 %       output folder for head model data
 %   cfg.files
@@ -19,10 +28,18 @@ function cfg = align_electrodes_auto(cfg)
 
 if ~isfield(cfg, 'force'), cfg.force = false; end
 
+% Populate the stage information
+cfg = ftb.get_stage(cfg);
 
+% Set up the output folder
+cfg = ftb.setup_folder(cfg);
+
+%% Set up file names
+cfg.files.elec_orig = cfg.elec_orig;
 cfg.files.elec = fullfile(cfg.folder, 'elec.mat');
 cfg.files.elec_aligned = fullfile(cfg.folder, 'elec_aligned.mat');
-%% Save the config
+
+% Save the config
 ftb.save_config(cfg);
 
 % Check if we're setting up a head model from scratch
@@ -48,14 +65,16 @@ end
 cfgin = [];
 cfgin.type = 'fiducial';
 cfgin.files = cfg.files;
+cfgin.stage = cfg.stage;
 cfgin.outputfile = cfg.files.elec_aligned;
 ftb.align_electrodes(cfgin);
 
 %% Visualization - check alignment
 h = figure;
 cfgin = [];
-cfgin.files = cfg.files;
-ftb.vis_check_alignment(cfgin);
+cfgin.stage = cfg.stage;
+cfgin.elements = {'electrodes', 'volume'};
+ftb.vis_headmodel_elements(cfgin);
 
 %% Interactive alignment
 prompt = 'How''s it looking? Need manual alignment? (Y/n)';
@@ -66,6 +85,7 @@ if isequal(response, 'Y')
     cfgin = [];
     cfgin.type = 'interactive';
     cfgin.files = cfg.files;
+    cfgin.stage = cfg.stage;
     % Use the automatically aligned file
     cfgin.files.elec = cfg.files.elec_aligned;
     cfgin.outputfile = cfg.files.elec_aligned;
@@ -75,8 +95,9 @@ end
 %% Visualization - check alignment
 h = figure;
 cfgin = [];
-cfgin.files = cfg.files;
-ftb.vis_check_alignment(cfgin);
+cfgin.stage = cfg.stage;
+cfgin.elements = {'electrodes', 'volume'};
+ftb.vis_headmodel_elements(cfgin);
 
 %% Save the config
 ftb.save_config(cfg);

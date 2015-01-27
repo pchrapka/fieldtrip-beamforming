@@ -19,17 +19,4 @@ ft_defaults
 cur_file = mfilename('fullpath');
 [dep_path,~,~] = fileparts(cur_file);
 addpath(dep_path);
-    
-%% Create directories in current working directory
-directories = {...
-    fullfile('output','stage1_headmodel'),...
-    fullfile('output','stage2_leadfield'),...
-    fullfile('output','stage3_simulated_eeg'),...
-    fullfile('output','stage4_source_loc'),...
-    };
-for i=1:length(directories)
-    output_dir = directories{i};
-    if ~exist(output_dir, 'dir');
-        mkdir(output_dir);
-    end
-end
+

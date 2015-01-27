@@ -9,6 +9,7 @@ function cfg = get_stage(cfg)
 %   cfg.stage.headmodel
 %   cfg.stage.electrodes
 %   cfg.stage.leadfield
+%   cfg.stage.dipolesim
 %
 %   Output
 %   ------
@@ -32,21 +33,24 @@ k = k+1;
 stages(k).name = 'leadfield';
 stages(k).rank = k;
 
+k = k+1;
+stages(k).name = 'dipolesim';
+stages(k).rank = k;
+
 out = [];
 for i=1:length(stages)
     if isfield(cfg.stage, stages(i).name)
         % Concat the next short name
         if isempty(out)
-            cfg.stage.full = cfg.stage.(stages(i).name);
+            out = cfg.stage.(stages(i).name);
         else
-            cfg.stage.full = [out '_' cfg.stage.(stages(i).name)];
+            out = [out '_' cfg.stage.(stages(i).name)];
         end
         cfg.stage.folder = ['stage' num2str(stages(i).rank)...
             '_' stages(i).name];
-    else
-        % Return when we encouter the first missing stage
-        return
     end
 end
+
+cfg.stage.full = out;
 
 end

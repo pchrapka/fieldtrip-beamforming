@@ -11,7 +11,7 @@ create_HMbemcp_E256
 % create_HMbemcp_E256_L10mm
 % create_HMbemcp_E256_Llinx10mm
 create_HMbemcp_E256_Lliny10mm
-
+    
 cfgin = [];
 cfgin.stage.headmodel = 'HMbemcp';
 cfgin.stage.electrodes = 'E256';
@@ -21,7 +21,7 @@ ftb.vis_headmodel_elements(cfgin);
 
 %% Stage 4
 % Create simulated data
-% create_HMbemcp_E256_L10mm_SM1
+create_HMbemcp_E256_SM1
 % TODO Dependent on leadfield?
 
 %% Stage 5

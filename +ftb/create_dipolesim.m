@@ -84,6 +84,11 @@ signal_components = {...
 for i=1:length(signal_components)
     component = signal_components{i};
     
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
+    
     if isfield(cfg.(component), 'ft_dipolesignal')
         outputfile = cfg.files.ft_dipolesignal.(component);
         
@@ -112,6 +117,11 @@ signal_components = {...
 for i=1:length(signal_components)
     component = signal_components{i};
     outputfile = cfg.files.ft_dipolesimulation.(component);
+    
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
     
     if ~exist(outputfile,'file') || cfg.force
         % Copy params
@@ -180,6 +190,11 @@ for i=1:length(signal_components)
     inputfile = cfg.files.ft_dipolesimulation.(component);
     outputfile = cfg.files.ft_timelockanalysis.(component);
     
+     if ~isequal(component, 'noise') && ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+     end
+    
     if ~exist(outputfile, 'file')
 %         cfgin = cfg.ft_timelockanalysis;
         cfgin = [];
@@ -218,6 +233,11 @@ for i=1:length(signal_components)
     noisefile = cfg.files.ft_timelockanalysis.noise;
     outputfile = cfg.files.adjust_snr.(component);
     
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
+    
     if ~exist(outputfile, 'file')
         cfgin = [];
         cfgin.snr = cfg.(component).snr;
@@ -248,6 +268,10 @@ if ~exist(outputfile, 'file')
         if isequal(component, 'noise')
             inputfile = cfg.files.ft_timelockanalysis.(component);
         else
+            if ~isfield(cfg, component)
+                % Skip the component if it doesn't exist
+                continue;
+            end
             inputfile = cfg.files.adjust_snr.(component);
         end
         

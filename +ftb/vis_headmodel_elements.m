@@ -71,6 +71,30 @@ for i=1:length(cfg.elements)
                 leadfield.pos(leadfield.inside,2),...
                 leadfield.pos(leadfield.inside,3), 'k.');
             
+        case 'dipole'
+            hold on;
+            
+            % Load data
+            cfgtmp = ftb.get_stage(cfg, 'dipolesim');
+            cfghm = ftb.load_config(cfgtmp.stage.full);
+            
+            signal_components = {'signal','interference'};
+            
+            for i=1:length(signal_components)
+                component = signal_components{i};
+                if ~isfield(cfghm, component)
+                    % Skip if component not specified
+                    continue;
+                end
+                
+                dip = cfghm.(component).ft_dipolesimulation.dip;
+                ft_plot_dipole(dip.pos, dip.mom,...
+                    'diameter',5,...
+                    'length', 10,...
+                    'color', 'blue',...
+                    'unit', 'mm');
+            end
+            
         otherwise
             error(['fb:' mfilename],...
                 'unknown element %s', cfg.elements);

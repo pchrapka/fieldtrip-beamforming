@@ -41,8 +41,9 @@ cfg.stage.headmodel = 'HMbemcp';
 cfg.stage.electrodes = 'E256';
 cfg.stage.dipolesim = 'SM1snr0';
 
-cfg.snr = 0;
+snr = 0; % use the same snr for both signal and interference
 
+cfg.signal.snr = snr;
 cfg.signal.ft_dipolesignal = cfgsig;
 cfg.signal.ft_dipolesimulation.dip.pos = [dip(1).pos]; % in cm?
 cfg.signal.ft_dipolesimulation.dip.mom = [dip(1).mom]';
@@ -55,18 +56,23 @@ cfg.signal.ft_dipolesimulation.dip.mom = [dip(1).mom]';
 % cfg.ft_dipolesimulation.triallength = 4*256/fsample;% in seconds
 % cfg.ft_dipolesimulation.relnoise = 0; % TODO no idea what kind of units, %? db?
 
+cfg.interference.snr = snr;
 cfg.interference.ft_dipolesignal = cfgint;
 cfg.interference.ft_dipolesimulation.dip.pos = [dip(2).pos]; % in cm?
 cfg.interference.ft_dipolesimulation.dip.mom = [dip(2).mom]';
 % cfg.interference.ft_dipolesimulation.dip.signal = interference;
 
-cfg.noise.fsample = fsample;
-cfg.noise.ntrials = trials;
-cfg.noise.triallength = triallength;
-cfg.noise.power = 1;
+cfg.ft_dipolesimulationnoise.fsample = fsample;
+cfg.ft_dipolesimulationnoise.ntrials = trials;
+cfg.ft_dipolesimulationnoise.triallength = triallength;
+cfg.ft_dipolesimulationnoise.power = 1;
 % Create noise from output of ft_dipolesimulation, copy struct and fill it
 % in with noise
 
+% cfg.ft_timelockanalysis.covariance = 'yes';
+% cfg.ft_timelockanalysis.covariancewindow = 'all';
+% cfg.ft_timelockanalysis.keeptrials = 'no';
+% cfg.ft_timelockanalysis.removemean = 'yes';
 cfg = ftb.create_dipolesim(cfg);
 
 % create noise

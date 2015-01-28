@@ -18,7 +18,8 @@ function align_electrodes(cfg)
 % Load electrodes
 elec = ftb.util.loadvar(cfg.files.elec);
 % Load head model data
-cfghm = ftb.load_config(cfg.stage.headmodel);
+cfgtmp = ftb.get_stage(cfg, 'headmodel');
+cfghm = ftb.load_config(cfgtmp.stage.full);
 
 switch cfg.type
     
@@ -55,6 +56,9 @@ switch cfg.type
         cfgin.elec          = elec;
         cfgin.fiducial      = {'FidNz','FidT9','FidT10'};  % labels of fiducials in fid and in elec
         elec      = ft_electroderealign(cfgin);
+        
+        % Remove the fiducial labels
+%         temp = ft_channelselection({'all','-FidNz','-FidT9','-FidT10'}, elec.label);
         
     case 'interactive'
         %% Interactive alignment

@@ -14,7 +14,8 @@ for i=1:length(cfg.elements)
             hold on;
             
             % Load data
-            cfghm = ftb.load_config(cfg.stage.headmodel);
+            cfgtmp = ftb.get_stage(cfg, 'headmodel');
+            cfghm = ftb.load_config(cfgtmp.stage.full);
             vol = ftb.util.loadvar(cfghm.files.mri_headmodel);
             
             % Plot the scalp
@@ -45,7 +46,8 @@ for i=1:length(cfg.elements)
             hold on;
             
             % Load data
-            cfghm = ftb.load_config(cfg.stage.electrodes);
+            cfgtmp = ftb.get_stage(cfg, 'electrodes');
+            cfghm = ftb.load_config(cfgtmp.stage.full);
             elec = ftb.util.loadvar(cfghm.files.elec_aligned);
             
             % Plot electrodes
@@ -59,7 +61,8 @@ for i=1:length(cfg.elements)
             hold on;
             
             % Load data
-            cfghm = ftb.load_config(cfg.stage.leadfield);
+            cfgtmp = ftb.get_stage(cfg, 'leadfield');
+            cfghm = ftb.load_config(cfgtmp.stage.full);
             leadfield = ftb.util.loadvar(cfghm.files.leadfield);
             
             % Plot inside points

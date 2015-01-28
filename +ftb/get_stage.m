@@ -1,4 +1,4 @@
-function cfg = get_stage(cfg)
+function cfg = get_stage(cfg, name)
 %get_stage returns the stage information based on the cfg.stage struct
 %
 %   Input
@@ -11,6 +11,9 @@ function cfg = get_stage(cfg)
 %   cfg.stage.leadfield
 %   cfg.stage.dipolesim
 %
+%   name
+%       (optional) specify stage at which to stop
+%
 %   Output
 %   ------
 %   updated cfg struct
@@ -19,6 +22,10 @@ function cfg = get_stage(cfg)
 %       stage name
 %   cfg.stage.folder
 %       folder for storing the output files of the current stage
+
+if nargin < 2
+    name = '';
+end
 
 stages = [];
 k = 1;
@@ -37,6 +44,20 @@ k = k+1;
 stages(k).name = 'dipolesim';
 stages(k).rank = k;
 
+% Check name
+if ~isempty(name)
+    nameok = false;
+    for i=1:length(stages)
+        if isequal(name, stages(i).name)
+            nameok = true;
+        end
+    end
+    if ~nameok
+        error(['ftb:' mfilename],...
+            'unknown stage %s',name);
+    end
+end
+
 out = [];
 for i=1:length(stages)
     if isfield(cfg.stage, stages(i).name)
@@ -48,6 +69,11 @@ for i=1:length(stages)
         end
         cfg.stage.folder = ['stage' num2str(stages(i).rank)...
             '_' stages(i).name];
+    end
+    
+    if isequal(name, stages(i).name)
+        % Break, if we've reached the stopping point
+        break;
     end
 end
 

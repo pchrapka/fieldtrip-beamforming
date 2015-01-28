@@ -33,8 +33,10 @@ cfg = ftb.get_stage(cfg);
 cfg = ftb.setup_folder(cfg);
 
 %% Load head model config
-cfghm = ftb.load_config(cfg.stage.headmodel);
-cfgelec = ftb.load_config(cfg.stage.electrodes);
+cfgtmp = ftb.get_stage(cfg, 'headmodel');
+cfghm = ftb.load_config(cfgtmp.stage.full);
+cfgtmp = ftb.get_stage(cfg, 'electrodes');
+cfgelec = ftb.load_config(cfgtmp.stage.full);
 
 %% Set up file names
 cfg.files.leadfield = fullfile(cfg.folder, 'leadfield.mat');
@@ -45,6 +47,12 @@ cfgin = cfg.ft_prepare_leadfield;
 cfgin.elecfile = cfgelec.files.elec_aligned;
 cfgin.hdmfile = cfghm.files.mri_headmodel;
 if ~exist(cfg.files.leadfield,'file') || cfg.force
+%     if ~isfield(cfgin, 'channel')
+%         % Remove fiducial channels
+%         elec = ftb.util.loadvar(cfgin.elecfile);
+%         cfgin.channel = ft_channelselection(...
+%             {'all','-FidNz','-FidT9','-FidT10'}, elec.label);
+%     end
     leadfield = ft_prepare_leadfield(cfgin);
     save(cfg.files.leadfield, 'leadfield');
 else

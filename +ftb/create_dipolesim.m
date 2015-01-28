@@ -33,8 +33,10 @@ cfg = ftb.get_stage(cfg);
 cfg = ftb.setup_folder(cfg);
 
 %% Load head model config
-cfghm = ftb.load_config(cfg.stage.headmodel);
-cfgelec = ftb.load_config(cfg.stage.electrodes);
+cfgtmp = ftb.get_stage(cfg, 'headmodel');
+cfghm = ftb.load_config(cfgtmp.stage.full);
+cfgtmp = ftb.get_stage(cfg, 'electrodes');
+cfgelec = ftb.load_config(cfgtmp.stage.full);
 
 %% Set up file names
 cfg.files.dipolesim_signal = fullfile(cfg.folder, 'dipolesim_signal.mat');

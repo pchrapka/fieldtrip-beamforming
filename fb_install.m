@@ -11,7 +11,8 @@ dep_path = fullfile(matlab_dir,'psom-1.0.2');
 addpath(dep_path);
 
 % Add fieldtrip package to Matlab path
-dep_path = fullfile(matlab_dir,'fieldtrip-20140611');
+% dep_path = fullfile(matlab_dir,'fieldtrip-20140611');
+dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
 addpath(dep_path);
 ft_defaults
 % Copy the private functions

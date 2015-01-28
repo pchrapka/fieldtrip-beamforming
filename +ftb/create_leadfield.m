@@ -47,12 +47,15 @@ cfgin = cfg.ft_prepare_leadfield;
 cfgin.elecfile = cfgelec.files.elec_aligned;
 cfgin.hdmfile = cfghm.files.mri_headmodel;
 if ~exist(cfg.files.leadfield,'file') || cfg.force
-%     if ~isfield(cfgin, 'channel')
-%         % Remove fiducial channels
-%         elec = ftb.util.loadvar(cfgin.elecfile);
-%         cfgin.channel = ft_channelselection(...
-%             {'all','-FidNz','-FidT9','-FidT10'}, elec.label);
-%     end
+    % TODO remove fiducial channels in electrode stage
+    if ~isfield(cfgin, 'channel')
+        % Remove fiducial channels
+        elec = ftb.util.loadvar(cfgin.elecfile);
+        cfgin.channel = ft_channelselection(...
+            {'all','-FidNz','-FidT9','-FidT10'}, elec.label);
+    end
+    
+    % Compute leadfield
     leadfield = ft_prepare_leadfield(cfgin);
     save(cfg.files.leadfield, 'leadfield');
 else

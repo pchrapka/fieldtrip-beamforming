@@ -3,9 +3,9 @@ stage = [];
 
 %% Stage 1
 % Create a bemcp head model
-% headmodel = 'HMbemcp';
+headmodel = 'HMbemcp';
 % Create an openmeeg head model
-headmodel = 'HMopenmeeg';
+% headmodel = 'HMopenmeeg';
 % Most accurate according to: https://hal.inria.fr/hal-00776674/document
 
 stage.headmodel = headmodel;
@@ -41,6 +41,7 @@ cfg = ftb.create_leadfield(cfg);
 % Create simulated data
 % dipolesim = 'SM1snr0';
 dipolesim = 'SS1snr0';
+% dipolesim = 'SN1';
 
 stage.dipolesim = dipolesim;
 % Get the config
@@ -48,7 +49,7 @@ cfg = ftb.prepare_dipolesim(stage);
 % Create the model
 cfg = ftb.create_dipolesim(cfg);
 
-% check_dipolesim(cfg);
+check_dipolesim(cfg);
 
 %% Stage 5
 % Source localization
@@ -61,3 +62,11 @@ cfg = ftb.prepare_sourceanalysis(stage);
 cfg = ftb.create_sourceanalysis(cfg);
 
 check_sourceanalysis(cfg);
+
+cfgcopy = cfg;
+cfgcopy.contrast = 'SN1';
+check_sourceanalysis(cfgcopy);
+% %% Stage 6
+% cfg.contrast.top = 'SS1snr0';
+% cfg.contrast.bottom = 'SN1';
+% check_contrast(cfg);

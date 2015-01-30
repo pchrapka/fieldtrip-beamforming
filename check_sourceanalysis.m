@@ -1,4 +1,7 @@
 function check_sourceanalysis(cfg)
+%
+%   cfg.contrast
+%       (optional) name of dipolesim to contrast
 
 debug = true;
 if debug
@@ -6,10 +9,20 @@ if debug
     cfgtmp = ftb.get_stage(cfg);
     cfgsource = ftb.load_config(cfgtmp.stage.full);
     source = ftb.util.loadvar(cfgsource.files.ft_sourceanalysis.all);
+
     % Load the head model
     cfgtmp = ftb.get_stage(cfg, 'headmodel');
     cfghm = ftb.load_config(cfgtmp.stage.full);
     volume = ftb.util.loadvar(cfghm.files.mri_headmodel);
+    
+    if isfield(cfg, 'contrast')
+        % Load noise source
+        cfgcopy = cfg;
+        cfgcopy.stage.dipolesim = cfg.contrast;
+        cfgtmp = ftb.get_stage(cfgcopy);
+        cfgnoise = ftb.load_config(cfgtmp.stage.full);
+        source_noise = ftb.util.loadvar(cfgnoise.files.ft_sourceanalysis.all);
+    end
     
     cfgin = [];
     mri = ftb.util.loadvar(cfghm.files.mri_mat);
@@ -18,6 +31,9 @@ if debug
     % Take neural activity index
     % NOTE doesn't seem to help
     sourcenai = source;
+    if exist('source_noise', 'var')
+        sourcenai.avg.pow = source.avg.pow ./ source_noise.avg.pow;
+    end
     %sourcenai.avg.pow = source.avg.pow ./ source.avg.noise;
     
     cfgin = [];
@@ -44,6 +60,9 @@ if debug
     figure;
     cfgin = [];
     cfgin.stage = cfg.stage;
+    if isfield(cfg, 'contrast')
+        cfgin.contrast = cfg.contrast;
+    end
     ftb.vis_sourceanalysis(cfgin);
 end
 

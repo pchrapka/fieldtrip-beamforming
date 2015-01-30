@@ -66,7 +66,3 @@ check_sourceanalysis(cfg);
 cfgcopy = cfg;
 cfgcopy.contrast = 'SN1';
 check_sourceanalysis(cfgcopy);
-% %% Stage 6
-% cfg.contrast.top = 'SS1snr0';
-% cfg.contrast.bottom = 'SN1';
-% check_contrast(cfg);

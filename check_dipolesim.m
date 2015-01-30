@@ -8,7 +8,9 @@ if debug
     if exist(datafile,'file')
         data = ftb.util.loadvar(datafile);
         figure;
-        ft_databrowser([], data);
+        % Show the first trial
+        plot(data{1});
+        xlim([0 length(data{1})]);
     end
 end
 

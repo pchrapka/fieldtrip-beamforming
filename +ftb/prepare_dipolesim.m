@@ -15,15 +15,16 @@ switch stage.dipolesim
     case 'SM1snr0'
         
         k = 1;
-        dip(k).pos = [-25 0 50];%/10; % cm?
+        dip(k).pos = [-50 -10 50];%/10; % cm?
         dip(k).mom = dip(k).pos/norm(dip(k).pos);
         k = k+1;
         dip(k).pos = [0 -50 50];%/10; % cm?
         dip(k).mom = dip(k).pos/norm(dip(k).pos);
         
+        nsamples = 1000;
         trials = 100;
         fsample = 250; %Hz
-        triallength = 4*256/fsample;
+        triallength = nsamples/fsample;
         
         % Signal configuration
         cfgsig = [];
@@ -68,6 +69,7 @@ switch stage.dipolesim
         cfg.ft_dipolesimulationnoise.power = 1;
         
     case 'SS1snr0'
+        % sinusoidal signal, no interference
         
         k = 1;
         dip(k).pos = [-50 -10 50];%/10; % cm?
@@ -76,9 +78,10 @@ switch stage.dipolesim
         % dip(k).pos = [0 -50 50];
         % dip(k).mom = dip(k).pos/norm(dip(k).pos);
         
+        nsamples = 1000;
         trials = 1;
         fsample = 250; %Hz
-        triallength = 4*256/fsample;
+        triallength = nsamples/fsample;
         
         snr = 0; % use the same snr for both signal and interference
         
@@ -106,26 +109,14 @@ switch stage.dipolesim
 %         cfg.ft_dipolesimulationnoise.power = 1;
 
     case 'SN1'
+        % noise
         
-%         k = 1;
-%         dip(k).pos = [-50 -10 50];%/10; % cm?
-%         dip(k).mom = dip(k).pos/norm(dip(k).pos);
-        % k = k+1;
-        % dip(k).pos = [0 -50 50];
-        % dip(k).mom = dip(k).pos/norm(dip(k).pos);
-        
+        nsamples = 1000;
         trials = 1;
         fsample = 250; %Hz
-        triallength = 4*256/fsample;
+        triallength = nsamples/fsample;
         
-        snr = 0; % use the same snr for both signal and interference
-        
-%         cfg.signal.snr = snr;
-        % cfg.signal.ft_dipolesignal = cfgsig;
         cfg.signal.ft_dipolesimulation.signal = {zeros(triallength*fsample,1)};
-%         cfg.signal.ft_dipolesimulation.fsample = fsample;
-%         cfg.signal.ft_dipolesimulation.ntrials = trials;
-%         cfg.signal.ft_dipolesimulation.triallength = triallength;
         cfg.signal.ft_dipolesimulation.absnoise = 0.1;
         
     otherwise

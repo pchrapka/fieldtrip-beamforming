@@ -1,11 +1,14 @@
 debug = false;
 stage = [];
 
+% restart_stage = 'Lliny10mm';
+% ftb.clean_data(restart_stage);
+
 %% Stage 1
 % Create a bemcp head model
-headmodel = 'HMbemcp';
+% headmodel = 'HMbemcp';
 % Create an openmeeg head model
-% headmodel = 'HMopenmeeg';
+headmodel = 'HMopenmeeg';
 % Most accurate according to: https://hal.inria.fr/hal-00776674/document
 
 stage.headmodel = headmodel;
@@ -25,9 +28,12 @@ cfg = ftb.create_electrodes(cfg);
 
 %% Stage 3
 % Create leadfield
-leadfield = 'L10mm';
+leadfield = 'L5mm';
+% leadfield = 'L10mm';
 % leadfield = 'Llinx10mm';
 % leadfield = 'Lliny10mm';
+% leadfield = 'Lliny1mm';
+% leadfield = 'Lsurf10mm';
 
 stage.leadfield = leadfield;
 % Get the config
@@ -49,7 +55,7 @@ cfg = ftb.prepare_dipolesim(stage);
 % Create the model
 cfg = ftb.create_dipolesim(cfg);
 
-check_dipolesim(cfg);
+% check_dipolesim(cfg);
 
 %% Stage 5
 % Source localization
@@ -61,6 +67,8 @@ cfg = ftb.prepare_sourceanalysis(stage);
 % Create the model
 cfg = ftb.create_sourceanalysis(cfg);
 
+cfg.checks = {'anatomical', 'headmodel', 'scatter'};
+% cfg.checks = {'headmodel', 'scatter'};
 check_sourceanalysis(cfg);
 
 cfgcopy = cfg;

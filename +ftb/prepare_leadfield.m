@@ -11,6 +11,16 @@ cfg.stage.leadfield = stage.leadfield;
 
 % Set up leadfield config
 switch stage.leadfield
+    case 'Lsurf10mm';
+%         cfg.ft_prepare_sourcemodel.grid.resolution = 10;
+%         cfg.ft_prepare_sourcemodel.grid.unit = 'mm';
+        cfg.ft_prepare_sourcemodel = [];
+        cfg.ft_prepare_sourcemodel.grid.unit = 'mm';
+        
+    case 'L5mm'
+        cfg.ft_prepare_leadfield.grid.resolution = 5;
+        cfg.ft_prepare_leadfield.grid.unit = 'mm';
+        
     case 'L10mm'
         cfg.ft_prepare_leadfield.grid.resolution = 10;
         cfg.ft_prepare_leadfield.grid.unit = 'mm';
@@ -28,8 +38,18 @@ switch stage.leadfield
         % The lead field is on a linear grid in the y direction with 10mm
         % spacing
 
-        cfg.ft_prepare_leadfield.grid.xgrid = -25;
+        cfg.ft_prepare_leadfield.grid.xgrid = -50;
         cfg.ft_prepare_leadfield.grid.ygrid = -100:10:100;
+        cfg.ft_prepare_leadfield.grid.zgrid = 50;
+        % cfg.ft_prepare_leadfield.grid.resolution = 10;
+        cfg.ft_prepare_leadfield.grid.unit = 'mm';
+        
+    case 'Lliny1mm'
+        % The lead field is on a linear grid in the y direction with 10mm
+        % spacing
+        
+        cfg.ft_prepare_leadfield.grid.xgrid = -50;
+        cfg.ft_prepare_leadfield.grid.ygrid = -100:1:100;
         cfg.ft_prepare_leadfield.grid.zgrid = 50;
         % cfg.ft_prepare_leadfield.grid.resolution = 10;
         cfg.ft_prepare_leadfield.grid.unit = 'mm';

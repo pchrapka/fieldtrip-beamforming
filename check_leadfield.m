@@ -1,6 +1,6 @@
 function check_leadfield(cfg)
 
-debug = false;
+debug = true;
 if debug
     cfgtmp = ftb.get_stage(cfg);
     cfglf = ftb.load_config(cfgtmp.stage.full);

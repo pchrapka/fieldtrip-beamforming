@@ -146,7 +146,7 @@ for i=1:length(cfg.elements)
             
         otherwise
             error(['fb:' mfilename],...
-                'unknown element %s', cfg.elements);
+                'unknown element %s', cfg.elements{i});
     end
 end
 

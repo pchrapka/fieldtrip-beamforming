@@ -4,7 +4,7 @@ function cfg = prepare_dipolesim(stage)
 %   stage.electrodes
 %   stage.dipolesim
 
-unit = 'cm';
+unit = 'mm';
 if isequal(unit, 'cm')
     scale = 0.1; % for cm
 elseif isequal(unit, 'mm')
@@ -108,7 +108,7 @@ switch stage.dipolesim
         cfg.signal.ft_dipolesimulation.fsample = fsample;
         cfg.signal.ft_dipolesimulation.ntrials = trials;
         cfg.signal.ft_dipolesimulation.triallength = triallength;
-        cfg.signal.ft_dipolesimulation.absnoise = 0.1;
+        cfg.signal.ft_dipolesimulation.absnoise = 0.01;
         
         % cfg.interference.snr = snr;
         % cfg.interference.ft_dipolesignal = cfgint;
@@ -131,7 +131,7 @@ switch stage.dipolesim
         triallength = nsamples/fsample;
         
         cfg.signal.ft_dipolesimulation.signal = {zeros(triallength*fsample,1)};
-        cfg.signal.ft_dipolesimulation.absnoise = 0.1;
+        cfg.signal.ft_dipolesimulation.absnoise = 0.01;
         
     otherwise
         error(['ftb:' mfilename],...

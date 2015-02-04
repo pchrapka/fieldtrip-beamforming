@@ -21,12 +21,28 @@ switch stage.leadfield
         cfg.ft_prepare_leadfield.grid.resolution = 1;
         cfg.ft_prepare_leadfield.grid.unit = 'cm';
         
+    case 'L1mm'
+        resolution = 1;
+        cfg.ft_prepare_leadfield.grid.xgrid = -60:resolution:110;
+        cfg.ft_prepare_leadfield.grid.ygrid = -70:resolution:60;
+        cfg.ft_prepare_leadfield.grid.zgrid = -10:resolution:120;
+%         cfg.ft_prepare_leadfield.grid.resolution = 10;
+        cfg.ft_prepare_leadfield.grid.unit = 'mm';
+        
     case 'L5mm'
-        cfg.ft_prepare_leadfield.grid.resolution = 5;
+        resolution = 5;
+        cfg.ft_prepare_leadfield.grid.xgrid = -60:resolution:110;
+        cfg.ft_prepare_leadfield.grid.ygrid = -70:resolution:60;
+        cfg.ft_prepare_leadfield.grid.zgrid = -10:resolution:120;
+%         cfg.ft_prepare_leadfield.grid.resolution = 5;
         cfg.ft_prepare_leadfield.grid.unit = 'mm';
         
     case 'L10mm'
-        cfg.ft_prepare_leadfield.grid.resolution = 10;
+        resolution = 10;
+        cfg.ft_prepare_leadfield.grid.xgrid = -60:resolution:110;
+        cfg.ft_prepare_leadfield.grid.ygrid = -70:resolution:60;
+        cfg.ft_prepare_leadfield.grid.zgrid = -10:resolution:120;
+%         cfg.ft_prepare_leadfield.grid.resolution = 10;
         cfg.ft_prepare_leadfield.grid.unit = 'mm';
         
     case 'Llinx10mm'

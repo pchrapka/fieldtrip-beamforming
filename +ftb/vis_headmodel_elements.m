@@ -143,6 +143,14 @@ for i=1:length(cfg.elements)
                     continue;
                 end
                 
+                switch component
+                    case 'signal'
+                        color = 'blue';
+                    case 'interference'
+                        color = 'red';
+                    otherwise
+                end
+                
                 params = cfghm.(component).ft_dipolesimulation;
                 if isfield(params, 'dip')
                     dip = params.dip;
@@ -158,7 +166,7 @@ for i=1:length(cfg.elements)
                     ft_plot_dipole(dip.pos, dip.mom,...
                         ...'diameter',5,...
                         ...'length', 10,...
-                        'color', 'blue',...
+                        'color', color,...
                         'units', unit);
                 end
             end

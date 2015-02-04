@@ -54,18 +54,15 @@ for i=1:length(cfg.checks)
             
             cfgin = [];
             cfgin.stage = cfg.stage;
-            cfgin.elements = {'brain', 'dipole', 'leadfield'};
+            cfgin.elements = {'brain', 'dipole', 'leadfield', 'electrodes'};
             ftb.vis_headmodel_elements(cfgin);
             
             
         case 'scatter'
             figure;
-            cfgin = [];
-            cfgin.stage = cfg.stage;
-            if isfield(cfg, 'contrast')
-                cfgin.contrast = cfg.contrast;
-            end
+            cfgin = cfg;
             ftb.vis_sourceanalysis(cfgin);
+            
         otherwise
             error(['fb:' mfilename],...
                 'unknown check %s', cfg.checks{i});

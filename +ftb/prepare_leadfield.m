@@ -17,6 +17,10 @@ switch stage.leadfield
         cfg.ft_prepare_sourcemodel = [];
         cfg.ft_prepare_sourcemodel.grid.unit = 'mm';
         
+    case 'L1cm'
+        cfg.ft_prepare_leadfield.grid.resolution = 1;
+        cfg.ft_prepare_leadfield.grid.unit = 'cm';
+        
     case 'L5mm'
         cfg.ft_prepare_leadfield.grid.resolution = 5;
         cfg.ft_prepare_leadfield.grid.unit = 'mm';

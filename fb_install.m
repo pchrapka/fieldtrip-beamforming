@@ -15,7 +15,9 @@ addpath(dep_path);
 dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
 addpath(dep_path);
 ft_defaults
-% Copy the private functions
+
+% Add private fieldtrip functions
+% Copy the private functions into a new directory and make them private
 oldpath = fullfile(dep_path, 'private');
 newpath = fullfile(dep_path, 'private_not');
 copyfile(oldpath, newpath);
@@ -30,3 +32,4 @@ cur_file = mfilename('fullpath');
 [dep_path,~,~] = fileparts(cur_file);
 addpath(dep_path);
 
+% TODO wget anatomy data, or is it available in fieldtrip?

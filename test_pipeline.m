@@ -28,7 +28,8 @@ cfg = ftb.create_electrodes(cfg);
 
 %% Stage 3
 % Create leadfield
-leadfield = 'L5mm';
+leadfield = 'L1cm';
+% leadfield = 'L5mm';
 % leadfield = 'L10mm';
 % leadfield = 'Llinx10mm';
 % leadfield = 'Lliny10mm';

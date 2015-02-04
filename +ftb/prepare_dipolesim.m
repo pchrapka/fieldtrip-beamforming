@@ -4,6 +4,16 @@ function cfg = prepare_dipolesim(stage)
 %   stage.electrodes
 %   stage.dipolesim
 
+unit = 'cm';
+if isequal(unit, 'cm')
+    scale = 0.1; % for cm
+elseif isequal(unit, 'mm')
+    scale = 1; % for mm
+else
+    error(['ftb:' mfilename],...
+        'unknown unit %s', unit);
+end
+
 cfg = [];
 cfg.force = false;
 cfg.stage.headmodel = stage.headmodel;
@@ -15,10 +25,10 @@ switch stage.dipolesim
     case 'SM1snr0'
         
         k = 1;
-        dip(k).pos = [-50 -10 50];%/10; % cm?
+        dip(k).pos = scale*[-50 -10 50];% mm
         dip(k).mom = dip(k).pos/norm(dip(k).pos);
         k = k+1;
-        dip(k).pos = [0 -50 50];%/10; % cm?
+        dip(k).pos = scale*[0 -50 50];% mm
         dip(k).mom = dip(k).pos/norm(dip(k).pos);
         
         nsamples = 1000;
@@ -55,12 +65,14 @@ switch stage.dipolesim
         cfg.signal.ft_dipolesignal = cfgsig;
         cfg.signal.ft_dipolesimulation.dip.pos = [dip(1).pos]; % in cm?
         cfg.signal.ft_dipolesimulation.dip.mom = [dip(1).mom]';
+        cfg.signal.ft_dipolesimulation.dip.unit = unit;
         % cfg.signal.ft_dipolesimulation.dip.signal = signal;
         
         cfg.interference.snr = snr;
         cfg.interference.ft_dipolesignal = cfgint;
         cfg.interference.ft_dipolesimulation.dip.pos = [dip(2).pos]; % in cm?
         cfg.interference.ft_dipolesimulation.dip.mom = [dip(2).mom]';
+        cfg.interference.ft_dipolesimulation.dip.unit = unit;
         % cfg.interference.ft_dipolesimulation.dip.signal = interference;
         
         cfg.ft_dipolesimulationnoise.fsample = fsample;
@@ -72,7 +84,7 @@ switch stage.dipolesim
         % sinusoidal signal, no interference
         
         k = 1;
-        dip(k).pos = [-50 -10 50];%/10; % cm?
+        dip(k).pos = scale*[-50 -10 50]; % mm
         dip(k).mom = dip(k).pos/norm(dip(k).pos);
         % k = k+1;
         % dip(k).pos = [0 -50 50];
@@ -89,6 +101,7 @@ switch stage.dipolesim
         % cfg.signal.ft_dipolesignal = cfgsig;
         cfg.signal.ft_dipolesimulation.dip.pos = [dip(1).pos]; % in cm?
         cfg.signal.ft_dipolesimulation.dip.mom = [dip(1).mom]';
+        cfg.signal.ft_dipolesimulation.dip.unit = unit;
         cfg.signal.ft_dipolesimulation.dip.frequency = 10;
         cfg.signal.ft_dipolesimulation.dip.phase = 0;
         cfg.signal.ft_dipolesimulation.dip.amplitude = 1*70;
@@ -110,6 +123,7 @@ switch stage.dipolesim
 
     case 'SN1'
         % noise
+        % FIXME check if a default dipole is added
         
         nsamples = 1000;
         trials = 1;

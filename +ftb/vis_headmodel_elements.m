@@ -8,6 +8,8 @@ function vis_headmodel_elements(cfg)
 %
 %   See also ftb.get_stage
 
+unit = 'mm';
+
 for i=1:length(cfg.elements)
     switch cfg.elements{i}
         case 'scalp'
@@ -17,6 +19,9 @@ for i=1:length(cfg.elements)
             cfgtmp = ftb.get_stage(cfg, 'headmodel');
             cfghm = ftb.load_config(cfgtmp.stage.full);
             vol = ftb.util.loadvar(cfghm.files.mri_headmodel);
+            
+            % Convert to mm
+            vol = ft_convert_units(vol, unit);
             
             % Plot the scalp
             if isfield(vol, 'bnd')
@@ -56,6 +61,9 @@ for i=1:length(cfg.elements)
             cfghm = ftb.load_config(cfgtmp.stage.full);
             vol = ftb.util.loadvar(cfghm.files.mri_headmodel);
             
+            % Convert to mm
+            vol = ft_convert_units(vol, unit);
+            
             % Plot the scalp
             if isfield(vol, 'bnd')
                 switch vol.type
@@ -92,6 +100,9 @@ for i=1:length(cfg.elements)
             cfghm = ftb.load_config(cfgtmp.stage.full);
             elec = ftb.util.loadvar(cfghm.files.elec_aligned);
             
+            % Convert to mm
+            elec = ft_convert_units(elec, unit);
+            
             % Plot electrodes
             ft_plot_sens(elec,...
                 'style', 'sk',...
@@ -107,9 +118,8 @@ for i=1:length(cfg.elements)
             cfghm = ftb.load_config(cfgtmp.stage.full);
             leadfield = ftb.util.loadvar(cfghm.files.leadfield);
             
-            % dipole is in cm
-            % Convert leadfield to cm
-%             leadfield = ft_convert_units(leadfield, 'cm');
+            % Convert to mm
+            leadfield = ft_convert_units(leadfield, unit);
             
             % Plot inside points
             plot3(...
@@ -136,11 +146,20 @@ for i=1:length(cfg.elements)
                 params = cfghm.(component).ft_dipolesimulation;
                 if isfield(params, 'dip')
                     dip = params.dip;
+                    if ~isequal(dip.unit, unit)
+                        switch dip.unit
+                            case 'cm'
+                                dip.pos = dip.pos*10;
+                            otherwise
+                                error(['ftb:' mfilename],...
+                                    'implement unit %s', dip.unit);
+                        end
+                    end
                     ft_plot_dipole(dip.pos, dip.mom,...
                         ...'diameter',5,...
                         ...'length', 10,...
                         'color', 'blue',...
-                        'units', 'mm');
+                        'units', unit);
                 end
             end
             

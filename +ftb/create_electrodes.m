@@ -73,7 +73,7 @@ ftb.align_electrodes(cfgin);
 h = figure;
 cfgin = [];
 cfgin.stage = cfg.stage;
-cfgin.elements = {'electrodes', 'volume'};
+cfgin.elements = {'electrodes', 'scalp'};
 ftb.vis_headmodel_elements(cfgin);
 
 %% Interactive alignment
@@ -96,7 +96,7 @@ end
 h = figure;
 cfgin = [];
 cfgin.stage = cfg.stage;
-cfgin.elements = {'electrodes', 'volume'};
+cfgin.elements = {'electrodes', 'scalp'};
 ftb.vis_headmodel_elements(cfgin);
 
 %% Save the config

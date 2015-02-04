@@ -43,10 +43,24 @@ cfg.files.leadfield = fullfile(cfg.folder, 'leadfield.mat');
 
 %% Compute leadfield
 
+if isfield(cfg, 'ft_prepare_sourcemodel')
+    cfgin = cfg.ft_prepare_sourcemodel;
+    cfgin.vol = ftb.util.loadvar(cfghm.files.mri_headmodel);
+%     cfgin.hdmfile = cfghm.files.mri_headmodel;
+    % Set up the source model
+    grid = ft_prepare_sourcemodel(cfgin);
+    % Add to leadfield config
+    cfg.ft_prepare_leadfield.grid = grid;
+    % NOTE 
+    % Doens't work, volume surface defaults to skin, no option for
+    % ft_prepare_sourcemodel to change it
+end
+
 cfgin = cfg.ft_prepare_leadfield;
 cfgin.elecfile = cfgelec.files.elec_aligned;
 cfgin.hdmfile = cfghm.files.mri_headmodel;
 if ~exist(cfg.files.leadfield,'file') || cfg.force
+    
     % TODO remove fiducial channels in electrode stage
     if ~isfield(cfgin, 'channel')
         % Remove fiducial channels

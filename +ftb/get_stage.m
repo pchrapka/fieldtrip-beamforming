@@ -44,19 +44,43 @@ k = k+1;
 stages(k).name = 'dipolesim';
 stages(k).rank = k;
 
-% Check name
+k = k+1;
+stages(k).name = 'beamformer';
+stages(k).rank = k;
+
 if ~isempty(name)
+    % Check name
     nameok = false;
     for i=1:length(stages)
         if isequal(name, stages(i).name)
             nameok = true;
+            break;
         end
     end
     if ~nameok
         error(['ftb:' mfilename],...
             'unknown stage %s',name);
     end
+    
+    % Alter the list of stage names based on the stopping name
+    switch name
+        case 'leadfield'
+            % Find the stage
+            a = arrayfun(@(x)isequal(x.name, 'dipolesim'), stages);
+            idx = find(a == 1, 1);
+            % Remove the stage
+            stages(idx) = [];
+        case 'dipolesim'
+            % Find the stage
+            a = arrayfun(@(x)isequal(x.name, 'leadfield'), stages);
+            idx = find(a == 1, 1);
+            % Remove the stage
+            stages(idx) = [];
+        otherwise
+            % No need to do anything
+    end
 end
+
 
 out = [];
 for i=1:length(stages)

@@ -84,6 +84,11 @@ signal_components = {...
 for i=1:length(signal_components)
     component = signal_components{i};
     
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
+    
     if isfield(cfg.(component), 'ft_dipolesignal')
         outputfile = cfg.files.ft_dipolesignal.(component);
         
@@ -112,6 +117,11 @@ signal_components = {...
 for i=1:length(signal_components)
     component = signal_components{i};
     outputfile = cfg.files.ft_dipolesimulation.(component);
+    
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
     
     if ~exist(outputfile,'file') || cfg.force
         % Copy params
@@ -145,7 +155,10 @@ end
 
 %% Simulate the noise
 outputfile = cfg.files.ft_dipolesimulation.noise;
-if ~exist(outputfile,'file') || cfg.force
+if ~isfield(cfg, 'ft_dipolesimulationnoise')
+    fprintf('%s: skipping ft_dipolesimulationnoise for noise, not specified\n',...
+        mfilename);
+elseif ~exist(outputfile,'file') || cfg.force
     % Copy params
     cfgin = cfg.ft_dipolesimulationnoise;
     cfgin.elecfile = cfgelec.files.elec_aligned;
@@ -179,6 +192,22 @@ for i=1:length(signal_components)
     component = signal_components{i};
     inputfile = cfg.files.ft_dipolesimulation.(component);
     outputfile = cfg.files.ft_timelockanalysis.(component);
+    
+    if ~isequal(component, 'noise') && ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
+    
+    if ~exist(inputfile, 'file')
+        % Skip the component if the input file does not exist
+        % Should be limited to only the noise component, if there are no
+        % options for ft_dipolesimulationnoise
+        if ~isequal(component, 'noise')
+            error(['ftb:' mfilename],...
+                'something went wrong here');
+        end
+        continue;
+    end
     
     if ~exist(outputfile, 'file')
 %         cfgin = cfg.ft_timelockanalysis;
@@ -218,18 +247,33 @@ for i=1:length(signal_components)
     noisefile = cfg.files.ft_timelockanalysis.noise;
     outputfile = cfg.files.adjust_snr.(component);
     
+    if ~isfield(cfg, component)
+        % Skip the component if it doesn't exist
+        continue;
+    end
+    
     if ~exist(outputfile, 'file')
-        cfgin = [];
-        cfgin.snr = cfg.(component).snr;
-        cfgin.inputfile = inputfile;
-        cfgin.noisefile = noisefile;
-        cfgin.outputfile = outputfile;
-        ftb.adjust_snr(cfgin);
+        
+        if ~isfield(cfg, 'ft_dipolesimulationnoise')
+            fprintf('%s: skipping adjust_snr, ft_dipolesimulationnoise not specified\n',...
+                mfilename);
+            % That is the snr is already adjusted, so just copy the
+            % previous file
+            copyfile(inputfile, outputfile);
+        else
+            cfgin = [];
+            cfgin.snr = cfg.(component).snr;
+            cfgin.inputfile = inputfile;
+            cfgin.noisefile = noisefile;
+            cfgin.outputfile = outputfile;
+            ftb.adjust_snr(cfgin);
+        end
     else
         fprintf('%s: skipping ftb.adjust_snr for %s, already exists\n',...
             mfilename, component);
     end
 end
+
 
 %% Sum all the components together and calculate the covariance
 
@@ -243,11 +287,22 @@ outputfile = cfg.files.adjust_snr.all;
 % Loop over signal components
 if ~exist(outputfile, 'file')
     data_all = [];
+    
+    % Sum all the components together
     for i=1:length(signal_components)
         component = signal_components{i};
         if isequal(component, 'noise')
             inputfile = cfg.files.ft_timelockanalysis.(component);
+            % Might not exist is ft_dipolesimulationnoise is not specified
+            if ~exist(inputfile, 'file')
+                % Skip the component if it doesn't exist
+                continue;
+            end
         else
+            if ~isfield(cfg, component)
+                % Skip the component if it doesn't exist
+                continue;
+            end
             inputfile = cfg.files.adjust_snr.(component);
         end
         

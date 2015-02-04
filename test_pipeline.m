@@ -48,7 +48,7 @@ cfg = ftb.prepare_leadfield(stage);
 % Create the model
 cfg = ftb.create_leadfield(cfg);
 
-% check_leadfield(cfg);
+% ftb.check_leadfield(cfg);
 
 %% Stage 4
 % Create simulated data
@@ -62,7 +62,7 @@ cfg = ftb.prepare_dipolesim(stage);
 % Create the model
 cfg = ftb.create_dipolesim(cfg);
 
-% check_dipolesim(cfg);
+% ftb.check_dipolesim(cfg);
 
 %% Stage 5
 % Source localization
@@ -84,7 +84,7 @@ cfg.method = 'all';
 % cfg.method = 'plane';
 % cfg.plane.axis = 'x';
 % cfg.plane.value = -50;
-% check_sourceanalysis(cfg);
+% ftb.check_sourceanalysis(cfg);
 
 %% Stage 4b
 % Simulate noise for contrast plot
@@ -115,4 +115,4 @@ cfg = ftb.prepare_sourceanalysis(stage);
 cfgcopy = cfg;
 cfgcopy.contrast = dipolesimnoise;
 cfgcopy.checks = {'anatomical', 'headmodel', 'scatter'};
-check_sourceanalysis(cfgcopy);
+ftb.check_sourceanalysis(cfgcopy);

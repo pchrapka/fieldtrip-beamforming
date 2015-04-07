@@ -5,7 +5,7 @@
 #sudo apt-get install openmeeg-tools
 
 OS=$(uname -m)
-echo $OS
+echo "OS: $OS"
 if [ "$OS" == "x86_64" ]
 then
     DIR=linux64
@@ -15,7 +15,7 @@ else
     exit 2
 fi
 
-PKGDIR=external/openmeeg/$DIR
+PKGDIR=~/Documents/MATLAB/openmeeg/$DIR
 
 FILE=openmeeg.tar.gz
 sudo mkdir -p $PKGDIR
@@ -25,6 +25,10 @@ CURDIR=$(pwd)
 cd $PKGDIR
 sudo tar --strip-components=1 -xzf $FILE
 cd $CURDIR
+
+echo "Add the following lines to your .bashrc file"
+echo "    export PATH=\$PATH:$PKGDIR/bin"
+echo "    export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$PKGDIR/lib"
 
 ## Download data
 # wget ftp://ftp.fieldtriptoolbox.org/pub/fieldtrip/tutorial/Subject01.zip

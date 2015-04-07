@@ -1,4 +1,14 @@
 function check_leadfield(cfg)
+%   Input
+%   -----
+%   cfg.stage
+%       struct of short names for each pipeline stage
+%   cfg.stage.headmodel
+%       head model name
+%   cfg.stage.electrodes
+%       electrode configuration name
+%   cfg.stage.leadfield
+%       lead field name
 
 debug = true;
 if debug

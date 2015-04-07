@@ -1,4 +1,15 @@
 function check_dipolesim(cfg)
+%   Input
+%   -----
+%   cfg.stage
+%       struct of short names for each pipeline stage
+%   cfg.stage.headmodel
+%       head model name
+%   cfg.stage.electrodes
+%       electrode configuration name
+%   cfg.stage.dipolesim
+%       dipole simulation name
+
 debug = true;
 if debug
     cfgtmp = ftb.get_stage(cfg, 'dipolesim');

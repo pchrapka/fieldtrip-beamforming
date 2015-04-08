@@ -20,7 +20,10 @@ function cfg = setup_folder(cfg)
 
 % Check if a folder is specified
 if ~isfield(cfg, 'folder') || isempty(cfg.folder)
-    cfg = ftb.get_stage(cfg);
+    % Check if stage has been populated
+    if ~isfield(cfg, 'stage') && ~isfield(cfg.stage, 'folder')
+        cfg = ftb.get_stage(cfg);
+    end
     cfg.folder = fullfile('output', cfg.stage.folder, cfg.stage.full);
 end
 

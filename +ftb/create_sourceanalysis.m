@@ -57,6 +57,12 @@ if ~exist(outputfile,'file') || cfg.force
     
     % Set up head model files
     grid = ftb.util.loadvar(cfglf.files.leadfield);
+    if isfield(cfgin, 'grid')
+        % Copy the filters if they're specified
+        if isfield(cfgin.grid, 'filter')
+            grid.filter = cfgin.grid.filter;
+        end
+    end
     cfgin.grid = grid;
     cfgin.elecfile = cfgelec.files.elec_aligned;
     cfgin.hdmfile = cfghm.files.mri_headmodel;

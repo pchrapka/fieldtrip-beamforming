@@ -78,6 +78,9 @@ for i=1:length(cfg.checks)
             cfgin = cfg;
             ftb.vis_sourceanalysis(cfgin);
             
+            cfgbf = ftb.get_stage(cfg, 'beamformer');
+            title(strrep(cfgbf.stage.full,'_' ,' '));
+            
         otherwise
             error(['fb:' mfilename],...
                 'unknown check %s', cfg.checks{i});

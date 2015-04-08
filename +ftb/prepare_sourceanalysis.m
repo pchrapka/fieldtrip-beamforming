@@ -6,7 +6,6 @@ function cfg = prepare_sourceanalysis(stage)
 %   stage.dipolesim
 
 cfg = [];
-cfg.force = true;
 cfg.stage.headmodel = stage.headmodel;
 cfg.stage.electrodes = stage.electrodes;
 cfg.stage.leadfield = stage.leadfield;

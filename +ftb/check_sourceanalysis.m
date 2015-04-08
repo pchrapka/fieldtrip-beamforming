@@ -1,4 +1,19 @@
 function check_sourceanalysis(cfg)
+%   
+%   Input
+%   -----
+%   cfg.stage
+%       struct of short names for each pipeline stage
+%   cfg.stage.headmodel
+%       head model name
+%   cfg.stage.electrodes
+%       electrode configuration name
+%   cfg.stage.leadfield
+%       lead field name
+%   cfg.stage.dipolesim
+%       dipole simulation name
+%   cfg.stage.beamformer
+%       source analysis name
 %
 %   cfg.contrast
 %       (optional) name of dipolesim to contrast

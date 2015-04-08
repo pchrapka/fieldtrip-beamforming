@@ -1,35 +1,41 @@
 %% fb_install.m
 
-%% Add dependencies to the Matlab path
-
 % Get the user's Matlab directory
 matlab_dir = userpath;
 matlab_dir = matlab_dir(1:end-1);
 
-% Add PSOM
-dep_path = fullfile(matlab_dir,'psom-1.0.2');
-addpath(dep_path);
+%% Add packages to the Matlab path
 
-% Add fieldtrip package to Matlab path
-% dep_path = fullfile(matlab_dir,'fieldtrip-20140611');
+%% Add fieldtrip-beamforming
+cur_file = mfilename('fullpath');
+[pkg_path,~,~] = fileparts(cur_file);
+addpath(pkg_path);
+
+%% Add fieldtrip-beamforming external packages
+% Add phasereset
+addpath(fullfile(pkg_path,'external','phasereset'));
+
+% Add PSOM
+% dep_path = fullfile(matlab_dir,'psom-1.0.2');
+% addpath(dep_path);
+
+%% Add fieldtrip
+
+% Add fieldtrip
 dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
+if ~exist(dep_path,'dir')
+    error(['fb:' mfilename],...
+        ['%s does not exist.\n'...
+        'Please check the path to your fieldtrip installtion.\n'], dep_path);
+end
 addpath(dep_path);
 ft_defaults
 
 % Add private fieldtrip functions
-% Copy the private functions into a new directory and make them private
+% Copy the private functions into a new directory and make them not private
 oldpath = fullfile(dep_path, 'private');
 newpath = fullfile(dep_path, 'private_not');
 copyfile(oldpath, newpath);
 addpath(newpath);
-
-% Add phasereset package to Matlab path
-dep_path = fullfile(matlab_dir,'phasereset');
-addpath(dep_path);
-
-% Add fieldtrip-beamforming
-cur_file = mfilename('fullpath');
-[dep_path,~,~] = fileparts(cur_file);
-addpath(dep_path);
 
 % TODO wget anatomy data, or is it available in fieldtrip?

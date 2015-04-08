@@ -84,7 +84,7 @@ cfg.method = 'all';
 % cfg.method = 'plane';
 % cfg.plane.axis = 'x';
 % cfg.plane.value = -50;
-% ftb.check_sourceanalysis(cfg);
+ftb.check_sourceanalysis(cfg);
 
 %% Stage 4b
 % Simulate noise for contrast plot

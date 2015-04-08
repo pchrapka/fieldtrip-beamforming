@@ -21,7 +21,7 @@ git clone https://github.com/pchrapka/fieldtrip-beamforming.git
 dependencies
 ------------
 
-This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these](http://www.fieldtriptoolbox.org/download) instructions on how to download and install fieldtrip.
+This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these instructions](http://www.fieldtriptoolbox.org/download) on how to download and install fieldtrip.
 
 setup
 -----

@@ -54,13 +54,13 @@ for i=1:length(cfg.checks)
             %sourcenai.avg.pow = source.avg.pow ./ source.avg.noise;
             
             cfgin = [];
-            cfgin.parameter = 'avg.pow';
+            cfgin.parameter = 'pow';
             interp = ft_sourceinterpolate(cfgin, sourcenai, resliced);
             
             cfgin = [];
             cfgin.method = 'slice';
 %             cfgin.method = 'ortho';
-            cfgin.funparameter = 'avg.pow';
+            cfgin.funparameter = 'pow';
             ft_sourceplot(cfgin, interp);
             
             

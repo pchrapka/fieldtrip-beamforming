@@ -65,7 +65,7 @@ if ~exist(outputfile,'file') || cfg.force
     end
     cfgin.grid = grid;
     cfgin.elecfile = cfgelec.files.elec_aligned;
-    cfgin.hdmfile = cfghm.files.mri_headmodel;
+    cfgin.headmodel = cfghm.files.mri_headmodel;
     
     cfgin.inputfile = inputfile;
     cfgin.outputfile = outputfile;

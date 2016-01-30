@@ -88,7 +88,7 @@ ftb.check_sourceanalysis(cfg);
 
 %% Stage 4b
 % Simulate noise for contrast plot
-dipolesimnoise = 'SN1';
+dipolesimnoise = 'SNabs0-01';
 
 stage.dipolesim = dipolesimnoise;
 % Get the config

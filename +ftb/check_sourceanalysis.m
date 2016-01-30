@@ -49,18 +49,18 @@ for i=1:length(cfg.checks)
             % NOTE doesn't seem to help
             sourcenai = source;
             if exist('source_noise', 'var')
-                sourcenai.avg.pow = source.avg.pow ./ source_noise.avg.pow;
+                sourcenai.avg.pow = source.avg.pow ./ source_noise.avg.pow - 1;
             end
             %sourcenai.avg.pow = source.avg.pow ./ source.avg.noise;
             
             cfgin = [];
-            cfgin.parameter = 'avg.pow';
+            cfgin.parameter = 'pow';
             interp = ft_sourceinterpolate(cfgin, sourcenai, resliced);
             
             cfgin = [];
             cfgin.method = 'slice';
 %             cfgin.method = 'ortho';
-            cfgin.funparameter = 'avg.pow';
+            cfgin.funparameter = 'pow';
             ft_sourceplot(cfgin, interp);
             
             
@@ -77,6 +77,9 @@ for i=1:length(cfg.checks)
             figure;
             cfgin = cfg;
             ftb.vis_sourceanalysis(cfgin);
+            
+            cfgbf = ftb.get_stage(cfg, 'beamformer');
+            title(strrep(cfgbf.stage.full,'_' ,' '));
             
         otherwise
             error(['fb:' mfilename],...

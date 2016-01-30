@@ -22,7 +22,8 @@ addpath(fullfile(pkg_path,'external','phasereset'));
 %% Add fieldtrip
 
 % Add fieldtrip
-dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
+% dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
+dep_path = fullfile(matlab_dir,'fieldtrip-20160128');
 if ~exist(dep_path,'dir')
     error(['fb:' mfilename],...
         ['%s does not exist.\n'...

@@ -63,7 +63,7 @@ if isfield(cfg, 'contrast')
     source_noise = ftb.util.loadvar(cfgnoise.files.ft_sourceanalysis.all);
     
     % Contrast
-    source.avg.pow = source.avg.pow ./ source_noise.avg.pow;
+    source.avg.pow = source.avg.pow ./ source_noise.avg.pow - 1;
 end
 
 % Get data for inside the head

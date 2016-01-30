@@ -127,7 +127,7 @@ for i=1:length(signal_components)
         % Copy params
         cfgin = cfg.(component).ft_dipolesimulation;
         cfgin.elecfile = cfgelec.files.elec_aligned;
-        cfgin.hdmfile = cfghm.files.mri_headmodel;
+        cfgin.headmodel = cfghm.files.mri_headmodel;
         
         % TODO remove fiducial channels in electrode stage
         if ~isfield(cfgin, 'channel')

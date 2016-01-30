@@ -49,7 +49,7 @@ for i=1:length(cfg.checks)
             % NOTE doesn't seem to help
             sourcenai = source;
             if exist('source_noise', 'var')
-                sourcenai.avg.pow = source.avg.pow ./ source_noise.avg.pow;
+                sourcenai.avg.pow = source.avg.pow ./ source_noise.avg.pow - 1;
             end
             %sourcenai.avg.pow = source.avg.pow ./ source.avg.noise;
             

@@ -10,6 +10,8 @@ matlab_dir = matlab_dir(1:end-1);
 cur_file = mfilename('fullpath');
 [pkg_path,~,~] = fileparts(cur_file);
 addpath(pkg_path);
+addpath(fullfile(pkg_path,'configs'));
+% TODO create config mat files? or save to git?
 
 %% Add fieldtrip-beamforming external packages
 % Add phasereset
@@ -41,4 +43,4 @@ addpath(newpath);
 
 % TODO wget anatomy data, or is it available in fieldtrip?
 
-clear all;
+%clear all;

@@ -40,3 +40,5 @@ copyfile(oldpath, newpath);
 addpath(newpath);
 
 % TODO wget anatomy data, or is it available in fieldtrip?
+
+clear all;

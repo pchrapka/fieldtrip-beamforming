@@ -2,41 +2,24 @@
 
 Easy to use EEG beamforming analysis pipeline. Organizes intermediate data based on dependencies. Tracks intermediate data for quicker iterations between analyses.
 
-## install
+## setup
 
-Clone the repo
-```bash
-cd projects
-git clone https://github.com/pchrapka/fieldtrip-beamforming.git
-```
+1. Clone the repo
+   ```bash
+   cd projects
+   git clone https://github.com/pchrapka/fieldtrip-beamforming.git
+   ```
 
-### dependencies
+2. Check and install dependencies below
 
-This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these instructions](http://www.fieldtriptoolbox.org/download) on how to download and install fieldtrip.
+3. Open up MATLAB
+   ```matlab
+   cd projects/fieldtrip-beamforming
+   fb_install
+   fb_make_configs
+   ```
 
-* OpenMEEG
-
-    This is optional. Only go through with this if you plan on using OpenMEEG.
-
-    Install OpenMEEG, open a terminal and run
-       ```
-       ./install.sh
-       ```
-	   
-   This will install OpenMEEG in /home/user/Documents/MATLAB/openmeeg. You will also need to modify your .bashrc
-   
-   TODO Add link to fieldtrip instructions
-
-### setup
-
-Open up MATLAB
-```matlab
-cd projects/fieldtrip-beamforming
-fb_install
-fb_make_configs
-```
-
-`fb_install` will throw up an error until you specify the path to your fieldtrip package
+	`fb_install` will throw up an error until you specify the path to your fieldtrip package
 
 TODO i should make this easier
 
@@ -46,6 +29,22 @@ Once you've gone through the install steps. Run the following in MATLAB
 ```matlab
 fb_demo
 ```
+
+## dependencies
+
+This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these instructions](http://www.fieldtriptoolbox.org/download) on how to download and install fieldtrip.
+
+### OpenMEEG
+This is optional. Only go through with this if you plan on using OpenMEEG.
+
+To iInstall OpenMEEG, open a terminal and run
+   ```bash
+   cd projects/fieldtrip-beamforming
+   ./install.sh
+   ```
+This will install OpenMEEG in /home/user/Documents/MATLAB/openmeeg. You will also need to modify your .bashrc
+   
+   TODO Add link to fieldtrip instructions
 
 ## data
 

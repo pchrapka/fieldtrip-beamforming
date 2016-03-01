@@ -5,7 +5,8 @@ High level EEG beamforming pipeline with built in depedency checks
 ## install
 
 Clone the repo
-```
+```bash
+cd projects
 git clone https://github.com/pchrapka/fieldtrip-beamforming.git
 ```
 
@@ -22,6 +23,17 @@ git clone https://github.com/pchrapka/fieldtrip-beamforming.git
 This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these instructions](http://www.fieldtriptoolbox.org/download) on how to download and install fieldtrip.
 
 ## setup
+
+Open up matlab
+```matlab
+cd projects/fieldtrip-beamforming
+fb_install
+fb_make_configs
+```
+
+`fb_install` will throw up an error until you specify the path to your fieldtrip package
+
+TODO i should make this interactive
 
 ### Default anatomical data
 

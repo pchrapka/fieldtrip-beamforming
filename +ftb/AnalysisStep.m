@@ -31,12 +31,17 @@ classdef AnalysisStep < handle
             obj.force = false;
         end
         
-%         function obj = add_prev(obj,prev)
-%             error(['ftb:' mfilename],...
-%                 'Not Implemented');
-%         end
-        
         function name = get_name(obj)
+            %GET_NAME returns name of analysis step based on dependency
+            %structure
+            %   GET_NAME returns name of analysis step based on dependency
+            %   structure
+            %   
+            %   Output
+            %   ------
+            %   name (string)
+            %       name of analysis step with dependency names prefixed to
+            %       it
             
             % create current object name
             name = [obj.prefix obj.name];
@@ -48,20 +53,26 @@ classdef AnalysisStep < handle
             end
         end
         
-%         function obj = init(obj, params)
-%             error(['ftb:' mfilename],...
-%                 'Not Implemented');
-%         end
-%         
-%         function obj = process(obj)
-%             error(['ftb:' mfilename],...
-%                 'Not Implemented');
-%         end
-%         
-%         function plot(obj, elements)
-%             error(['ftb:' mfilename],...
-%                 'Not Implemented');
-%         end
+        function restart = check_deps(obj)
+            %CHECK_DEPS checks if any dependencies have been recomputed
+            %   CHECK_DEPS checks if any dependencies have been recomputed
+            %   
+            %   Output
+            %   ------
+            %   restart (boolean)
+            %       true if any previous step has its restart flag set to
+            %       true, false otherwise
+            
+            restart = false;
+            while ~isempty(obj.prev)
+                if obj.prev.force
+                    restart = true;
+                    break;
+                end
+            end
+            
+        end
+        
     end
     
     methods (Abstract)

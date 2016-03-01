@@ -80,7 +80,7 @@ classdef Electrodes < ftb.AnalysisStep
         end
         
         function obj = process(obj)
-            debug = true;
+            debug = false;
             
             if ~obj.init_called
                 error(['ftb:' mfilename],...
@@ -88,14 +88,14 @@ classdef Electrodes < ftb.AnalysisStep
             end
             
             % Check if we're setting up a head model from scratch
-            if exist(obj.elec_aligned, 'file') && ~obj.force
+            if ~obj.check_file(obj.elec_aligned)
                 % Return if it already exists
                 fprintf('%s: skipping %s, already exists\n', mfilename, obj.elec_aligned);
                 return
             end
             
             % Load electrode data
-            if ~exist(obj.elec, 'file')
+            if obj.check_file(obj.elec)
                 data = ft_read_sens(obj.config.elec_orig);
                 % Ensure electrode coordinates are in mm
                 data = ft_convert_units(data, 'mm'); % should be the same unit as MRI

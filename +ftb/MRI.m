@@ -112,10 +112,9 @@ classdef MRI < ftb.AnalysisStep
             cfgin = obj.config.ft_prepare_mesh;
             cfgin.inputfile = obj.mri_segmented;
             % cfgin.outputfile = obj.mri_mesh; % forbidden
-            outputfile = obj.mri_mesh;
-            if ~exist(outputfile,'file')
+            if obj.check_file(obj.mri_mesh)
                 mesh = ft_prepare_mesh(cfgin);
-                save(outputfile, 'mesh');
+                save(obj.mri_mesh, 'mesh');
                 
                 % Check meshes
                 if debug

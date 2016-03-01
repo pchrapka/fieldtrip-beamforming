@@ -86,11 +86,10 @@ classdef Headmodel < ftb.AnalysisStep
             % Create the head model from the segmented data
             cfgin = obj.config.ft_prepare_headmodel;
             inputfile = obj.prev.mri_mesh;
-            outputfile = obj.mri_headmodel;
-            if ~exist(outputfile, 'file')
+            if obj.check_file(obj.mri_headmodel)
                 data = ftb.util.loadvar(inputfile);
                 vol = ft_prepare_headmodel(cfgin, data);
-                save(outputfile, 'vol');
+                save(obj.mri_headmodel, 'vol');
             else
                 fprintf('%s: skipping ft_prepare_headmodel, already exists\n',mfilename);
             end

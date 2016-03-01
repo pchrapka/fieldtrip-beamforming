@@ -64,15 +64,34 @@ classdef AnalysisStep < handle
             %       true, false otherwise
             
             restart = false;
-            while ~isempty(obj.prev)
-                if obj.prev.force
+            ptr = obj.prev;
+            while ~isempty(ptr)
+                if ptr.force
                     restart = true;
                     break;
                 end
+                ptr = ptr.prev;
             end
             
         end
         
+    end
+    
+    methods (Access = protected)
+        function restart = check_file(obj, file)
+            %CHECK_FILE check if file needs to recomputed
+            %   CHECK_FILE check if file needs to recomputed. Based on
+            %   force property in current object (obj.force) and previous
+            %   objects (obj.prev.force,...) and existence of file
+            %
+            %   Output
+            %   ------
+            %   restart (boolean)
+            %       true if the file needs to be recomputed, false otherwise
+            
+            force_deps = obj.check_deps();
+            restart = ~exist(file, 'file') || obj.force || force_deps;
+        end
     end
     
     methods (Abstract)

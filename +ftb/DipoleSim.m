@@ -90,7 +90,7 @@ classdef DipoleSim < ftb.AnalysisStep
             elecObj = lfObj.prev;
             hmObj = elecObj.prev;
             
-            if ~exist(obj.simulated, 'file') || obj.force
+            if obj.check_file(obj.simulated)
                 % setup cfg
                 cfgin = obj.config.ft_dipolesimulation;
                 cfgin.elecfile = elecObj.elec_aligned;
@@ -104,7 +104,7 @@ classdef DipoleSim < ftb.AnalysisStep
                     mfilename);
             end
             
-            if ~exist(obj.timelock, 'file') || obj.force
+            if obj.check_file(obj.timelock)
                 cfgin = obj.config.ft_timelockanalysis;
                 cfgin.inputfile = obj.simulated;
                 cfgin.outputfile = obj.timelock;

@@ -82,6 +82,9 @@ classdef Leadfield < ftb.AnalysisStep
                     'not initialized');
             end
             
+            % check deps restart
+            force_deps = obj.check_deps();
+            
             % get analysis step objects
             elecObj = obj.prev;
             hmObj = elecObj.prev;
@@ -102,7 +105,7 @@ classdef Leadfield < ftb.AnalysisStep
             cfgin = obj.config.ft_prepare_leadfield;
             cfgin.elecfile = elecObj.elec_aligned;
             cfgin.hdmfile = hmObj.mri_headmodel;
-            if ~exist(obj.leadfield,'file') || obj.force
+            if obj.check_file(obj.leadfield)
                 
                 % TODO remove fiducial channels in electrode stage
                 if ~isfield(cfgin, 'channel')

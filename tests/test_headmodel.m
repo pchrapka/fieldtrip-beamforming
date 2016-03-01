@@ -8,6 +8,17 @@ if ~isequal(curdir,srcdir)
     cd(srcdir);
 end
 
+% POSSIBLE BUGS
+%   1. Deleted files are not counted as a dependency change, I think the only
+%   solution here would require time stamp comparisons
+
+% NOTES
+%   
+
+% TODO
+%   - Set up TestAnalysisStep to test non-abstract functions, using other
+%   AnalysisStep subclasses
+
 %% Create analysis step objects
 
 config_dir = fullfile('..','configs');
@@ -26,6 +37,7 @@ e.force = false;
 
 params_lf = fullfile(config_dir, 'L5mm.mat');
 lf = ftb.Leadfield(params_lf,'5mm');
+lf.force = false;
 
 % params_dsim = fullfile(config_dir, 'DSsine.mat');
 % dsim = ftb.DipoleSim(params_dsim,'sine');

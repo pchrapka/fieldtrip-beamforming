@@ -57,7 +57,7 @@ classdef AnalysisBeamformer < handle
             
             % process each step
             for i=1:length(obj.steps)
-                obj.steps.process();
+                obj.steps{i}.process();
             end
         end
         

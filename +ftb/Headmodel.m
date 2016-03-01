@@ -66,6 +66,9 @@ classdef Headmodel < ftb.AnalysisStep
             
             % create folder for analysis step, name accounts for dependencies
             out_folder2 = fullfile(out_folder, obj.get_name());
+            if ~exist(out_folder2,'dir')
+                mkdir(out_folder2)
+            end            
             
             % set up file names
             obj.mri_headmodel = fullfile(...

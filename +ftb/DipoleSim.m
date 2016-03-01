@@ -96,6 +96,12 @@ classdef DipoleSim < ftb.AnalysisStep
                 cfgin.elecfile = elecObj.elec_aligned;
                 cfgin.headmodel = hmObj.mri_headmodel;
                 
+                % remove fiducial channels
+                if ~isfield(cfgin, 'channel')
+                    cfgin.channel = elecObj.remove_fiducials();
+                    fprintf('%s: removing fiducial electrodes\n', mfilename)
+                end
+                
                 % simulate dipoles
                 data = ft_dipolesimulation(cfgin);
                 save(obj.simulated, 'data');

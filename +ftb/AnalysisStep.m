@@ -75,6 +75,28 @@ classdef AnalysisStep < handle
             
         end
         
+        function result = get_dep(obj,class_name)
+            %GET_DEP finds first dependency that matches the class name
+            %   GET_DEP finds first dependency that matches the class name
+            %   
+            %   Output
+            %   ------
+            %   result (Object)
+            %       first dependency that matches the class name, otherwise
+            %       []
+            
+            result = [];
+            ptr = obj.prev;
+            while ~isempty(ptr)
+                % check if class matches
+                if isa(ptr,class_name)
+                    result = ptr;
+                    break;
+                end
+                ptr = ptr.prev;
+            end
+        end
+        
     end
     
     methods (Access = protected)

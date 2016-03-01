@@ -51,7 +51,7 @@ classdef TestDipoleSim < matlab.unittest.TestCase
             testCase.params = cfg;
             testCase.name = 'Test5mm';
             testCase.out_folder = fullfile(testdir,'output');
-            testCase.paramfile = fullfile(testCase.out_folder,'L5mm-test.mat');
+            testCase.paramfile = fullfile(testCase.out_folder,'DSsine-test.mat');
             
             % create output folder
             if ~exist(testCase.out_folder,'dir')

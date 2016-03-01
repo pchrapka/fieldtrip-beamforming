@@ -134,6 +134,14 @@ classdef Electrodes < ftb.AnalysisStep
             h = figure;
             elements = {'electrodes-aligned', 'electrodes-labels', 'scalp', 'fiducials'};
             obj.plot(elements);
+            
+            % Convert units
+            if isfield(obj.config,'units')
+                fprintf('%s: converting units to %s\n', mfilename, obj.config.units);
+                elec = ftb.util.loadvar(obj.elec_aligned);
+                elec = ft_convert_units(elec, obj.config.units);
+                save(obj.elec_aligned, 'elec');
+            end
         end
         
         function align_electrodes(obj, type, varargin)
@@ -223,6 +231,17 @@ classdef Electrodes < ftb.AnalysisStep
             
             % Save
             save(out_file, 'elec');
+            
+        end
+        
+        function channels = remove_fiducials(obj)
+            % removes fiducial channels
+            % returns list of channels without fiducials
+            
+            % load electrodes
+            sens = ftb.util.loadvar(obj.elec_aligned);
+            % remove Fid channels
+            channels = ft_channelselection({'all','-Fid*'}, sens.label);
             
         end
         

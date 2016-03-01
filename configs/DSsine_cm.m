@@ -1,4 +1,4 @@
-% DSsine
+% DSsine_cm
 
 curdir = pwd;
 [srcdir,~,~] = fileparts(mfilename('fullpath'));
@@ -6,18 +6,10 @@ if ~isequal(curdir,srcdir)
     cd(srcdir);
 end
 
-unit = 'mm';
-if isequal(unit, 'cm')
-    scale = 0.1; % for cm
-elseif isequal(unit, 'mm')
-    scale = 1; % for mm
-else
-    error(['ftb:' mfilename],...
-        'unknown unit %s', unit);
-end
+unit = 'cm';
 
 k = 1;
-dip(k).pos = scale*[-50 -10 50]; % mm
+dip(k).pos = [-5 -1 5]; % cm
 dip(k).mom = dip(k).pos/norm(dip(k).pos);
 
 nsamples = 1000;
@@ -42,6 +34,6 @@ cfg.ft_timelockanalysis.covariancewindow = 'all';
 cfg.ft_timelockanalysis.keeptrials = 'no';
 cfg.ft_timelockanalysis.removemean = 'yes';
 
-save('DSsine.mat','cfg');
+save('DSsine-cm.mat','cfg');
 
 cd(curdir);

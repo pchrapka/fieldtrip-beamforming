@@ -1,10 +1,4 @@
-% DSsine
-
-curdir = pwd;
-[srcdir,~,~] = fileparts(mfilename('fullpath'));
-if ~isequal(curdir,srcdir)
-    cd(srcdir);
-end
+function obj = create_test_dipolesim()
 
 unit = 'mm';
 if isequal(unit, 'cm')
@@ -42,6 +36,6 @@ cfg.ft_timelockanalysis.covariancewindow = 'all';
 cfg.ft_timelockanalysis.keeptrials = 'no';
 cfg.ft_timelockanalysis.removemean = 'yes';
 
-save('DSsine.mat','cfg');
+obj = ftb.DipoleSim(cfg, 'TestSine');
 
-cd(curdir);
+end

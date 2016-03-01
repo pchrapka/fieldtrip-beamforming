@@ -60,16 +60,29 @@ classdef TestElectrodes < matlab.unittest.TestCase
         end
         
         function test_init1(testCase)
+            % check init throws error
             a = ftb.Electrodes(testCase.params, testCase.name);
             testCase.verifyError(@()a.init(''),'ftb:Electrodes');
         end
         
         function test_init2(testCase)
+            % check init works
             a = ftb.Electrodes(testCase.params, testCase.name);
             a.init(testCase.out_folder);
             testCase.verifyEqual(a.init_called,true);
             testCase.verifyTrue(~isempty(a.elec));
             testCase.verifyTrue(~isempty(a.elec_aligned));
+        end
+        
+        function test_init3(testCase)
+            % check that get_name is used inside init
+            a = ftb.Electrodes(testCase.params, testCase.name);
+            a.add_prev(ftb.tests.create_test_hm());
+            n = a.get_name();
+            a.init(testCase.out_folder);
+            
+            [pathstr,~,~] = fileparts(a.elec);
+            testCase.verifyEqual(pathstr, fullfile(testCase.out_folder,n));
         end
         
         function test_add_prev(testCase)

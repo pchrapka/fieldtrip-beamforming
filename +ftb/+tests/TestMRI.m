@@ -68,17 +68,29 @@ classdef TestMRI < matlab.unittest.TestCase
         end
         
         function test_init1(testCase)
+            % check init throws error
             a = ftb.MRI(testCase.params, testCase.name);
             testCase.verifyError(@()a.init(''),'ftb:MRI');
         end
         
         function test_init2(testCase)
+            % check init works
             a = ftb.MRI(testCase.params, testCase.name);
             a.init(testCase.out_folder);
             testCase.verifyEqual(a.init_called,true);
             testCase.verifyTrue(~isempty(a.mri_mat));
             testCase.verifyTrue(~isempty(a.mri_segmented));
             testCase.verifyTrue(~isempty(a.mri_mesh));
+        end
+        
+        function test_init3(testCase)
+            % check that get_name is used inside init
+            a = ftb.MRI(testCase.params, testCase.name);
+            n = a.get_name();
+            a.init(testCase.out_folder);
+            
+            [pathstr,~,~] = fileparts(a.mri_mat);
+            testCase.verifyEqual(pathstr, fullfile(testCase.out_folder,n));
         end
         
         function test_get_name(testCase)

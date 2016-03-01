@@ -60,15 +60,28 @@ classdef TestHeadmodel < matlab.unittest.TestCase
         end
         
         function test_init1(testCase)
+            % check init throws error
             a = ftb.Headmodel(testCase.params, testCase.name);
             testCase.verifyError(@()a.init(''),'ftb:Headmodel');
         end
         
         function test_init2(testCase)
+            % check init works
             a = ftb.Headmodel(testCase.params, testCase.name);
             a.init(testCase.out_folder);
             testCase.verifyEqual(a.init_called,true);
             testCase.verifyTrue(~isempty(a.mri_headmodel));
+        end
+        
+        function test_init3(testCase)
+            % check that get_name is used inside init
+            a = ftb.Headmodel(testCase.params, testCase.name);
+            a.add_prev(ftb.tests.create_test_mri());
+            n = a.get_name();
+            a.init(testCase.out_folder);
+            
+            [pathstr,~,~] = fileparts(a.mri_headmodel);
+            testCase.verifyEqual(pathstr, fullfile(testCase.out_folder,n));
         end
         
         function test_add_prev(testCase)

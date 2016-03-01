@@ -8,7 +8,7 @@ classdef Headmodel < ftb.AnalysisStep
     end
     
     methods
-        function obj = Headmodel(params,name,prev)
+        function obj = Headmodel(params,name)
             %   params (struct or string)
             %       struct or file name
             %
@@ -22,8 +22,7 @@ classdef Headmodel < ftb.AnalysisStep
             p.StructExpand = false;
             addRequired(p,'params');
             addRequired(p,'name',@ischar);
-            addRequired(p,'prev',@(x)isa(x,'ftb.MRI'));
-            parse(p,params,name,prev);
+            parse(p,params,name);
             
             % set vars
             obj@ftb.AnalysisStep('HM');
@@ -38,10 +37,18 @@ classdef Headmodel < ftb.AnalysisStep
                 obj.config = din.cfg;
             end
             
+            obj.mri_headmodel = '';
+        end
+        
+        function obj = add_prev(obj,prev)
+            
+            % parse inputs
+            p = inputParser;
+            addRequired(p,'prev',@(x)isa(x,'ftb.MRI'));
+            parse(p,prev);
+            
             % set the previous step, aka MRI
             obj.prev = p.Results.prev;
-            
-            obj.mri_headmodel = '';
         end
         
         function obj = init(obj,out_folder)
@@ -57,15 +64,18 @@ classdef Headmodel < ftb.AnalysisStep
                     'please specify an output folder');
             end
             
-            % Set up file names
-            obj.mri_headmodel = fullfile(...
-                out_folder, ['mri_vol_' obj.config.ft_prepare_headmodel.method '.mat']);
+            % create folder for analysis step, name accounts for dependencies
+            out_folder2 = fullfile(out_folder, obj.get_name());
             
-            obj.state.init = true;
+            % set up file names
+            obj.mri_headmodel = fullfile(...
+                out_folder2, ['mri_vol_' obj.config.ft_prepare_headmodel.method '.mat']);
+            
+            obj.init_called = true;
         end
         
         function obj = process(obj)
-            if ~obj.state.init
+            if ~obj.init_called
                 error(['ftb:' mfilename],...
                     'not initialized');
             end
@@ -82,7 +92,95 @@ classdef Headmodel < ftb.AnalysisStep
                 fprintf('%s: skipping ft_prepare_headmodel, already exists\n',mfilename);
             end
         end
-    end
+        
+        function plot(obj, elements)
+            %   elements
+            %       cell array of head model elements to be plotted:
+            %       'scalp'
+            %       'brain'
+            %       can also include elements from previous stages
+            
+            unit = 'mm';
+            
+            % Load data
+            vol = ftb.util.loadvar(obj.mri_headmodel);
+            % Convert to mm
+            vol = ft_convert_units(vol, unit);
+            
+            for i=1:length(elements)
+                switch elements{i}
+                    case 'scalp'
+                        hold on;
+                        
+                        % Plot the scalp
+                        if isfield(vol, 'bnd')
+                            switch vol.type
+                                case 'bemcp'
+                                    ft_plot_mesh(vol.bnd(3),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                case 'dipoli'
+                                    ft_plot_mesh(vol.bnd(1),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                case 'openmeeg'
+                                    idx = vol.skin_surface;
+                                    ft_plot_mesh(vol.bnd(idx),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                otherwise
+                                    error(['ftb:' mfilename],...
+                                        'Which one is the scalp?');
+                            end
+                        elseif isfield(vol, 'r')
+                            ft_plot_vol(vol,...
+                                'facecolor', 'none',...
+                                'faceindex', false,...
+                                'vertexindex', false);
+                        end
+                        
+                    case 'brain'
+                        hold on;
+                        
+                        % Plot the scalp
+                        if isfield(vol, 'bnd')
+                            switch vol.type
+                                case 'bemcp'
+                                    ft_plot_mesh(vol.bnd(1),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                case 'dipoli'
+                                    ft_plot_mesh(vol.bnd(3),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                case 'openmeeg'
+                                    idx = vol.source;
+                                    ft_plot_mesh(vol.bnd(idx),...
+                                        'edgecolor','none',...
+                                        'facealpha',0.8,...
+                                        'facecolor',[0.6 0.6 0.8]);
+                                otherwise
+                                    error(['ftb:' mfilename],...
+                                        'Which one is the brain?');
+                            end
+                        else
+                            error(['ftb:' mfilename],...
+                                'Which one is the brain?');
+                        end
+                end
+            end
+            
+            % plot previous steps
+            if ~isempty(obj.prev)
+                obj.prev.plot(elements);
+            end
+        end
     
+    end
 end
 

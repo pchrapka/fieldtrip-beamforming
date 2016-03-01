@@ -57,22 +57,25 @@ classdef MRI < ftb.AnalysisStep
                     'please specify an output folder');
             end
             
+            % create folder for analysis step, name accounts for dependencies
+            out_folder2 = fullfile(out_folder, obj.get_name());
+            
             % Set up file names
             % MRI data specific
             [~, mri_name, ~] = fileparts(obj.config.mri_data);
-            obj.mri_mat = fullfile(out_folder, [mri_name '_mri.mat']);
-            obj.mri_segmented = fullfile(out_folder, [mri_name '_mri_segmented.mat']);
+            obj.mri_mat = fullfile(out_folder2, [mri_name '_mri.mat']);
+            obj.mri_segmented = fullfile(out_folder2, [mri_name '_mri_segmented.mat']);
             
             % Method specific
-            obj.mri_mesh = fullfile(out_folder, 'mri_mesh.mat');
+            obj.mri_mesh = fullfile(out_folder2, 'mri_mesh.mat');
             
-            obj.state.init = true;
+            obj.init_called = true;
         end
         
         function obj = process(obj)
             debug = false;
             
-            if ~obj.state.init
+            if ~obj.init_called
                 error(['ftb:' mfilename],...
                     'not initialized');
             end

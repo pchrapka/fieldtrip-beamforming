@@ -1,6 +1,6 @@
 # fieldtrip-beamforming
 
-High level EEG beamforming pipeline with built in depedency checks
+Easy to use EEG beamforming analysis pipeline. Organizes intermediate data based on dependencies. Tracks intermediate data for quicker iterations between analyses.
 
 ## install
 
@@ -14,14 +14,15 @@ git clone https://github.com/pchrapka/fieldtrip-beamforming.git
 
 This project is built on top of [fieldtrip](http://www.fieldtriptoolbox.org/). Follow [these instructions](http://www.fieldtriptoolbox.org/download) on how to download and install fieldtrip.
 
-#### OpenMEEG
+* OpenMEEG
 
-This is optional. Only go through with this if you plan on using OpenMEEG.
+    This is optional. Only go through with this if you plan on using OpenMEEG.
 
-Install OpenMEEG, open a terminal and run
-   ```
-   ./install.sh
-   ```
+    Install OpenMEEG, open a terminal and run
+       ```
+       ./install.sh
+       ```
+	   
    This will install OpenMEEG in /home/user/Documents/MATLAB/openmeeg. You will also need to modify your .bashrc
    
    TODO Add link to fieldtrip instructions

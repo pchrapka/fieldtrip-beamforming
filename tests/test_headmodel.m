@@ -27,6 +27,9 @@ e.force = false;
 params_lf = fullfile(config_dir, 'L5mm.mat');
 lf = ftb.Leadfield(params_lf,'5mm');
 
+params_dsim = fullfile(config_dir, 'DSsine.mat');
+dsim = ftb.Dipolesim(params_dsim,'sine');
+
 %% Set up beamformer analysis
 out_folder = 'output';
 if ~exist(out_folder,'dir')
@@ -62,3 +65,11 @@ analysis.process();
 
 figure;
 lf.plot({'brain','skull','scalp','fiducials','leadfield'});
+
+%% 
+analysis.add(dsim);
+analysis.init();
+analysis.process();
+
+figure;
+dsim.plot({'brain','skull','scalp','fiducials','dipole'});

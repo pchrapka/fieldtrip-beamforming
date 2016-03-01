@@ -44,6 +44,11 @@ classdef MRI < ftb.AnalysisStep
             obj.mri_mesh = '';
         end
         
+        function obj = add_prev(obj,prev)
+            % set the previous step, aka None
+            obj.prev = [];
+        end
+        
         function obj = init(obj,out_folder)
             
             % parse inputs
@@ -123,6 +128,37 @@ classdef MRI < ftb.AnalysisStep
             else
                 fprintf('%s: skipping ft_prepare_mesh, already exists\n',mfilename);
             end
+        end
+        
+        function plot(obj,elements)
+            
+            for i=1:length(elements)
+                switch elements{i}
+                    case 'fiducials'
+                        hold on;
+                        
+                        % load data
+                        mri = ftb.util.loadvar(obj.mri_mat);
+                    
+                        transm = mri.transform;
+                        fields = {'nas','lpa','rpa'};
+                        for j=1:length(fields)
+                            coord = mri.hdr.fiducial.mri.(fields{j});
+                            coord = ft_warp_apply(transm, coord, 'homogenous');
+                            pos(j,:) = coord;
+                            str{j} = upper(fields{j});
+                        end
+                        style = 'or';
+                        
+                        % plot points
+                        plot3(pos(:,1), pos(:,2), pos(:,3), style);
+                        % plot labels
+                        for j=1:size(pos,1)
+                            text(pos(j,1), pos(j,2), pos(j,3), str{j});
+                        end
+                end
+            end
+                        
         end
     end
     

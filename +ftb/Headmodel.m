@@ -86,7 +86,7 @@ classdef Headmodel < ftb.AnalysisStep
             % Create the head model from the segmented data
             cfgin = obj.config.ft_prepare_headmodel;
             inputfile = obj.prev.mri_mesh;
-            outputfile = obj.prev.mri_headmodel;
+            outputfile = obj.mri_headmodel;
             if ~exist(outputfile, 'file')
                 data = ftb.util.loadvar(inputfile);
                 vol = ft_prepare_headmodel(cfgin, data);
@@ -100,73 +100,87 @@ classdef Headmodel < ftb.AnalysisStep
             %   elements
             %       cell array of head model elements to be plotted:
             %       'scalp'
+            %       'skull'
             %       'brain'
             %       can also include elements from previous stages
             
             unit = 'mm';
-            
-            % Load data
-            vol = ftb.util.loadvar(obj.mri_headmodel);
-            % Convert to mm
-            vol = ft_convert_units(vol, unit);
             
             for i=1:length(elements)
                 switch elements{i}
                     case 'scalp'
                         hold on;
                         
+                        % Load data
+                        vol = ftb.util.loadvar(obj.mri_headmodel);
+                        % Convert to mm
+                        vol = ft_convert_units(vol, unit);
+                        
+                        style = {'edgecolor','none','facealpha',0.3,'facecolor','b'};
                         % Plot the scalp
                         if isfield(vol, 'bnd')
                             switch vol.type
                                 case 'bemcp'
-                                    ft_plot_mesh(vol.bnd(3),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(3),style{:});
                                 case 'dipoli'
-                                    ft_plot_mesh(vol.bnd(1),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(1),style{:});
                                 case 'openmeeg'
                                     idx = vol.skin_surface;
-                                    ft_plot_mesh(vol.bnd(idx),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(idx),style{:});
                                 otherwise
                                     error(['ftb:' mfilename],...
                                         'Which one is the scalp?');
                             end
                         elseif isfield(vol, 'r')
-                            ft_plot_vol(vol,...
-                                'facecolor', 'none',...
-                                'faceindex', false,...
-                                'vertexindex', false);
+                            style = {'facecolor','none','faceindex',false,'vertexindex', false};
+                            ft_plot_vol(vol,style{:});
+                        end
+                        
+                    case 'skull'
+                        hold on;
+                        
+                        % Load data
+                        vol = ftb.util.loadvar(obj.mri_headmodel);
+                        % Convert to mm
+                        vol = ft_convert_units(vol, unit);
+                        
+                        style = {'edgecolor','none','facealpha',0.3,'facecolor','g'};
+                        % Plot the skull
+                        if isfield(vol, 'bnd')
+                            switch vol.type
+                                case {'bemcp','dipoli'}
+                                    ft_plot_mesh(vol.bnd(2),style{:});
+                                case 'openmeeg'
+                                    idx = vol.skull_surface;
+                                    ft_plot_mesh(vol.bnd(idx),style{:});
+                                otherwise
+                                    error(['ftb:' mfilename],...
+                                        'Which one is the scalp?');
+                            end
+                        else
+                            error(['ftb:' mfilename],...
+                                'Which one is the skull?');
                         end
                         
                     case 'brain'
                         hold on;
                         
-                        % Plot the scalp
+                        % Load data
+                        vol = ftb.util.loadvar(obj.mri_headmodel);
+                        % Convert to mm
+                        vol = ft_convert_units(vol, unit);
+                        
+                        style = {'edgecolor','none','facealpha',0.3,'facecolor','r'};
+                        % Plot the brain
                         if isfield(vol, 'bnd')
                             switch vol.type
                                 case 'bemcp'
-                                    ft_plot_mesh(vol.bnd(1),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(1),style{:});
                                 case 'dipoli'
-                                    ft_plot_mesh(vol.bnd(3),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(3),style{:});
                                 case 'openmeeg'
                                     idx = vol.source;
-                                    ft_plot_mesh(vol.bnd(idx),...
-                                        'edgecolor','none',...
-                                        'facealpha',0.8,...
-                                        'facecolor',[0.6 0.6 0.8]);
+                                    ft_plot_mesh(vol.bnd(idx),style{:});
                                 otherwise
                                     error(['ftb:' mfilename],...
                                         'Which one is the brain?');

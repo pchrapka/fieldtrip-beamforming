@@ -7,11 +7,14 @@ classdef AnalysisStep < handle
         name;
         
         % state
-        force;
         init_called;
         
         % linked prev object
         prev;
+    end
+    
+    properties(SetAccess = public)
+        force;
     end
     
     methods
@@ -28,10 +31,10 @@ classdef AnalysisStep < handle
             obj.force = false;
         end
         
-        function obj = add_prev(obj,prev)
-            error(['ftb:' mfilename],...
-                'Not Implemented');
-        end
+%         function obj = add_prev(obj,prev)
+%             error(['ftb:' mfilename],...
+%                 'Not Implemented');
+%         end
         
         function name = get_name(obj)
             
@@ -45,15 +48,27 @@ classdef AnalysisStep < handle
             end
         end
         
-        function obj = init(obj, params)
-            error(['ftb:' mfilename],...
-                'Not Implemented');
-        end
-        
-        function obj = process(obj)
-            error(['ftb:' mfilename],...
-                'Not Implemented');
-        end
+%         function obj = init(obj, params)
+%             error(['ftb:' mfilename],...
+%                 'Not Implemented');
+%         end
+%         
+%         function obj = process(obj)
+%             error(['ftb:' mfilename],...
+%                 'Not Implemented');
+%         end
+%         
+%         function plot(obj, elements)
+%             error(['ftb:' mfilename],...
+%                 'Not Implemented');
+%         end
+    end
+    
+    methods (Abstract)
+        init(obj, params)
+        process(obj)
+        plot(obj, elements)
+        add_prev(obj, prev)
     end
     
 end

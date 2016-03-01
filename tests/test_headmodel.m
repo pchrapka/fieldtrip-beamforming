@@ -25,6 +25,7 @@ hm = ftb.Headmodel(params_hm,'bemcp');
 
 params_e = fullfile(config_dir, 'E128.mat');
 e = ftb.Electrodes(params_e,'128');
+e.force = true;
 
 out_folder = 'output';
 if ~exist(out_folder,'dir')
@@ -32,8 +33,23 @@ if ~exist(out_folder,'dir')
 end
 
 analysis = ftb.AnalysisBeamformer(out_folder);
+
+%%
 analysis.add(m);
+analysis.init();
+analysis.process();
+
+%%
 analysis.add(hm);
+analysis.init();
+analysis.process();
+figure;
+hm.plot({'brain','skull','scalp','fiducials'})
+
+%%
 analysis.add(e);
 analysis.init();
-%analysis.process();
+analysis.process();
+
+figure;
+e.plot({'brain','skull','scalp','fiducials','electrodes-aligned','electrodes-labels'})

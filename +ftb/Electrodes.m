@@ -80,6 +80,8 @@ classdef Electrodes < ftb.AnalysisStep
         end
         
         function obj = process(obj)
+            debug = true;
+            
             if ~obj.init_called
                 error(['ftb:' mfilename],...
                     'not initialized');
@@ -103,59 +105,38 @@ classdef Electrodes < ftb.AnalysisStep
                 fprintf('%s: skipping ft_read_sens, already exists\n',mfilename);
             end
             
-            %% Automatic alignment
+            if debug
+                % plot pre-alignment
+                elements = {'electrodes', 'scalp'};
+                obj.plot(elements);
+            end
+            
+            % Try automatic alignment
             % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
-%             cfgin = [];
-%             cfgin.type = 'fiducial';
-%             cfgin.files = cfg.files;
-%             cfgin.stage = cfg.stage;
-%             cfgin.outputfile = cfg.files.elec_aligned;
-%             ftb.align_electrodes(cfgin);
             obj.align_electrodes('fiducial');
-            obj.align_electrodes('fiducial',...
-                    'Output',obj.elec_aligned);
             
-            %% Visualization - check alignment
+            % Visualization - check alignment
             h = figure;
-%             cfgin = [];
-%             cfgin.stage = cfg.stage;
-%             cfgin.elements = {'electrodes', 'scalp'};
-%             ftb.vis_headmodel_elements(cfgin);
-            
-            elements = {'electrodes', 'scalp'};
+            elements = {'electrodes-aligned', 'electrodes-labels', 'scalp', 'fiducials'};
             obj.plot(elements);
             
-            %% Interactive alignment
+            % Interactive alignment
             prompt = 'How''s it looking? Need manual alignment? (Y/n)';
             response = input(prompt, 's');
             if isequal(response, 'Y')
                 close(h);
                 % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
-%                 cfgin = [];
-%                 cfgin.type = 'interactive';
-%                 cfgin.files = cfg.files;
-%                 cfgin.stage = cfg.stage;
-%                 % Use the automatically aligned file
-%                 cfgin.files.elec = obj.elec_aligned;
-%                 cfgin.outputfile = obj.elec_aligned;
-%                 ftb.align_electrodes(cfgin);
                 obj.align_electrodes('interactive',...
-                    'Input',obj.elec_aligned,...
-                    'Output',obj.elec_aligned);
+                    'Input',obj.elec_aligned);
             end
             
-            %% Visualization - check alignment
+            % Visualization - check alignment
             h = figure;
-%             cfgin = [];
-%             cfgin.stage = cfg.stage;
-%             cfgin.elements = {'electrodes', 'scalp'};
-%             ftb.vis_headmodel_elements(cfgin);
-            
-            elements = {'electrodes', 'scalp'};
+            elements = {'electrodes-aligned', 'electrodes-labels', 'scalp', 'fiducials'};
             obj.plot(elements);
         end
         
-        function align_electrodes(type, varargin)
+        function align_electrodes(obj, type, varargin)
             % Refer to http://fieldtrip.fcdonders.nl/tutorial/headmodel_eeg
             
             % parse inputs
@@ -170,34 +151,35 @@ classdef Electrodes < ftb.AnalysisStep
             
             % Load electrodes
             elec = ftb.util.loadvar(in_file);
-            % Load head model data
-            hm = obj.prev.prev;
+            % Load head model obj
+            mriObj = obj.prev.prev;
+            % Load
+            hmObj = obj.prev;
             
             switch type
                 
                 case 'fiducial'
-                    %% Fiducial alignment
+                    % Fiducial alignment
                     
                     % Load MRI data
-                    if isprop(hm, 'mri_mat')
-                        mri = ftb.util.loadvar(hm.mri_mat);
+                    if isprop(mriObj, 'mri_mat')
+                        mri = ftb.util.loadvar(mriObj.mri_mat);
                     else
-                        mri = ft_read_mri(hm.mri_data);
+                        mri = ft_read_mri(mriObj.mri_data);
                     end
                     
-                    % Get landmark coordinates
-                    nas=mri.hdr.fiducial.mri.nas;
-                    lpa=mri.hdr.fiducial.mri.lpa;
-                    rpa=mri.hdr.fiducial.mri.rpa;
-                    
-                    transm=mri.transform;
-                    
-                    nas=ft_warp_apply(transm,nas, 'homogenous');
-                    lpa=ft_warp_apply(transm,lpa, 'homogenous');
-                    rpa=ft_warp_apply(transm,rpa, 'homogenous');
+                    % get fiducials
+                    transm = mri.transform;
+                    fields = {'nas','lpa','rpa'};
+                    for j=1:length(fields)
+                        coord = mri.hdr.fiducial.mri.(fields{j});
+                        coord = ft_warp_apply(transm, coord, 'homogenous');
+                        pos(j,:) = coord;
+                        %str{j} = upper(fields{j});
+                    end
                     
                     % create a structure similar to a template set of electrodes
-                    fid.chanpos       = [nas; lpa; rpa];       % ctf-coordinates of fiducials
+                    fid.chanpos       = pos;       % ctf-coordinates of fiducials
                     fid.label         = {'FidNz','FidT9','FidT10'};    % same labels as in elec
                     fid.unit          = 'mm';                  % same units as mri
                     
@@ -205,6 +187,12 @@ classdef Electrodes < ftb.AnalysisStep
                     cfgin               = [];
                     cfgin.method        = 'fiducial';
                     cfgin.template      = fid;                   % see above
+                    % NOTE If you want to address the warning RE
+                    % cfgin.template, you need to use chanpos
+                    %cfgin.target.chanpos(1,:) = nas;
+                    %cfgin.target.chanpos(2,:) = lpa;
+                    %cfgin.target.chanpos(3,:) = rpa;
+                    %cfgin.target.label    = {'FidNz','FidT9','FidT10'};
                     cfgin.elec          = elec;
                     cfgin.fiducial      = {'FidNz','FidT9','FidT10'};  % labels of fiducials in fid and in elec
                     elec      = ft_electroderealign(cfgin);
@@ -213,9 +201,9 @@ classdef Electrodes < ftb.AnalysisStep
                     %         temp = ft_channelselection({'all','-FidNz','-FidT9','-FidT10'}, elec.label);
                     
                 case 'interactive'
-                    %% Interactive alignment
+                    % Interactive alignment
                     
-                    vol = ftb.util.loadvar(hm.mri_headmodel);
+                    vol = ftb.util.loadvar(hmObj.mri_headmodel);
                     
                     cfgin           = [];
                     cfgin.method    = 'interactive';
@@ -242,15 +230,19 @@ classdef Electrodes < ftb.AnalysisStep
             %   elements
             %       cell array of head model elements to be plotted:
             %       'electrodes'
+            %       'electrodes-aligned'
+            %       'electrodes-labels'
             %
             %       can also include elements from previous stages
             %       'scalp'
+            %       'skull'
             %       'brain'
+            %       'fiducials'
             
             unit = 'mm';
             
-            % Load data
-            elec = ftb.util.loadvar(obj.elec_aligned);
+            % check if we should plot labels
+            plot_labels = any(cellfun(@(x) isequal(x,'electrodes-labels'),elements));
             
             for i=1:length(elements)
                 switch elements{i}
@@ -258,15 +250,34 @@ classdef Electrodes < ftb.AnalysisStep
                     case 'electrodes'
                         hold on;
                         
+                        % Load data
+                        sens = ftb.util.loadvar(obj.elec);
+                        
                         % Convert to mm
-                        elec = ft_convert_units(elec, unit);
+                        sens = ft_convert_units(sens, unit);
                         
                         % Plot electrodes
-                        ft_plot_sens(elec,...
-                            'style', 'sk',...
-                            'coil', true);
-                        %'coil', false,...
-                        %'label', 'label');
+                        if plot_labels
+                            ft_plot_sens(sens,'style','og','label','label');
+                        else
+                            ft_plot_sens(sens,'style','og');
+                        end
+                    
+                    case 'electrodes-aligned'
+                        hold on;
+                        
+                        % Load data
+                        sens = ftb.util.loadvar(obj.elec_aligned);
+                        
+                        % Convert to mm
+                        sens = ft_convert_units(sens, unit);
+                        
+                        % Plot electrodes
+                        if plot_labels
+                            ft_plot_sens(sens,'style','og','label','label');
+                        else
+                            ft_plot_sens(sens,'style','og');
+                        end
                 end
             end
             

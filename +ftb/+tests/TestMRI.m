@@ -101,7 +101,8 @@ classdef TestMRI < matlab.unittest.TestCase
         
         function test_add_prev(testCase)
             a = ftb.MRI(testCase.params, testCase.name);
-            testCase.verifyError(@()a.add_prev([]),'ftb:AnalysisStep');
+            a.add_prev([]);
+            testCase.verifyEqual(a.prev,[]);
         end
         
         function test_process1(testCase)

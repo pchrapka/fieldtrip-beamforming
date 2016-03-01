@@ -14,6 +14,6 @@ cfg.ft_prepare_leadfield.grid.zgrid = -10:resolution:120;
 % cfg.ft_prepare_leadfield.grid.resolution = 5;
 cfg.ft_prepare_leadfield.grid.unit = 'mm';
 
-save('E256.mat','cfg');
+save('L5mm.mat','cfg');
 
 cd(curdir);

@@ -1,17 +1,14 @@
 %% test_pipeline_object
 
+close all;
+
 curdir = pwd;
 [srcdir,~,~] = fileparts(mfilename('fullpath'));
 if ~isequal(curdir,srcdir)
     cd(srcdir);
 end
 
-%% Stage 1
-% Create a bemcp head model
-% headmodel = 'HMS01bemcp';
-% Create an openmeeg head model
-% headmodel = 'HMopenmeeg';
-% Most accurate according to: https://hal.inria.fr/hal-00776674/document
+%% Create analysis step objects
 
 config_dir = fullfile('..','configs');
 
@@ -25,8 +22,12 @@ hm = ftb.Headmodel(params_hm,'bemcp');
 
 params_e = fullfile(config_dir, 'E128.mat');
 e = ftb.Electrodes(params_e,'128');
-e.force = true;
+e.force = false;
 
+params_lf = fullfile(config_dir, 'L5mm.mat');
+lf = ftb.Leadfield(params_lf,'5mm');
+
+%% Set up beamformer analysis
 out_folder = 'output';
 if ~exist(out_folder,'dir')
     mkdir(out_folder);
@@ -53,3 +54,11 @@ analysis.process();
 
 figure;
 e.plot({'brain','skull','scalp','fiducials','electrodes-aligned','electrodes-labels'})
+
+%%
+analysis.add(lf);
+analysis.init();
+analysis.process();
+
+figure;
+lf.plot({'brain','skull','scalp','fiducials','leadfield'});

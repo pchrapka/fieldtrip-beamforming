@@ -101,9 +101,10 @@ classdef TestHeadmodel < matlab.unittest.TestCase
         
         function test_get_name2(testCase)
             a = ftb.Headmodel(testCase.params, testCase.name);
-            a.add_prev(testCase.prev);
+            e = ftb.tests.create_test_mri();
+            a.add_prev(e);
             n = a.get_name();
-            testCase.verifyEqual(n, ['MRITestMRI-' 'HM' testCase.name]);
+            testCase.verifyEqual(n, ['MRI' e.name '-HM' testCase.name]);
         end
         
         function test_process1(testCase)

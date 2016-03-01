@@ -27,8 +27,11 @@ e.force = false;
 params_lf = fullfile(config_dir, 'L5mm.mat');
 lf = ftb.Leadfield(params_lf,'5mm');
 
-params_dsim = fullfile(config_dir, 'DSsine.mat');
-dsim = ftb.Dipolesim(params_dsim,'sine');
+% params_dsim = fullfile(config_dir, 'DSsine.mat');
+% dsim = ftb.DipoleSim(params_dsim,'sine');
+
+params_dsim = fullfile(config_dir, 'DSsine-test1.mat');
+dsim = ftb.DipoleSim(params_dsim,'sine-test1');
 
 %% Set up beamformer analysis
 out_folder = 'output';
@@ -48,23 +51,23 @@ analysis.add(hm);
 analysis.init();
 analysis.process();
 figure;
-hm.plot({'brain','skull','scalp','fiducials'})
+%hm.plot({'brain','skull','scalp','fiducials'})
 
 %%
 analysis.add(e);
 analysis.init();
 analysis.process();
 
-figure;
-e.plot({'brain','skull','scalp','fiducials','electrodes-aligned','electrodes-labels'})
+% figure;
+% e.plot({'brain','skull','scalp','fiducials','electrodes-aligned','electrodes-labels'})
 
 %%
 analysis.add(lf);
 analysis.init();
 analysis.process();
 
-figure;
-lf.plot({'brain','skull','scalp','fiducials','leadfield'});
+% figure;
+% lf.plot({'brain','skull','scalp','fiducials','leadfield'});
 
 %% 
 analysis.add(dsim);

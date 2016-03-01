@@ -10,13 +10,41 @@ classdef TestDipoleSim < matlab.unittest.TestCase
     methods (TestClassSetup)
         function create_config(testCase)
             % set up config
+            unit = 'mm';
+            if isequal(unit, 'cm')
+                scale = 0.1; % for cm
+            elseif isequal(unit, 'mm')
+                scale = 1; % for mm
+            else
+                error(['ftb:' mfilename],...
+                    'unknown unit %s', unit);
+            end
+            
+            k = 1;
+            dip(k).pos = scale*[-50 -10 50]; % mm
+            dip(k).mom = dip(k).pos/norm(dip(k).pos);
+            
+            nsamples = 1000;
+            trials = 1;
+            fsample = 250; %Hz
+            triallength = nsamples/fsample;
+            
             cfg = [];
-            resolution = 5;
-            cfg.ft_prepare_leadfield.grid.xgrid = -60:resolution:110;
-            cfg.ft_prepare_leadfield.grid.ygrid = -70:resolution:60;
-            cfg.ft_prepare_leadfield.grid.zgrid = -10:resolution:120;
-            % cfg.ft_prepare_leadfield.grid.resolution = 5;
-            cfg.ft_prepare_leadfield.grid.unit = 'mm';
+            cfg.ft_dipolesimulation.dip.pos = [dip(1).pos]; % in cm?
+            cfg.ft_dipolesimulation.dip.mom = [dip(1).mom]';
+            cfg.ft_dipolesimulation.dip.unit = unit;
+            cfg.ft_dipolesimulation.dip.frequency = 10;
+            cfg.ft_dipolesimulation.dip.phase = 0;
+            cfg.ft_dipolesimulation.dip.amplitude = 1*70;
+            cfg.ft_dipolesimulation.fsample = fsample;
+            cfg.ft_dipolesimulation.ntrials = trials;
+            cfg.ft_dipolesimulation.triallength = triallength;
+            cfg.ft_dipolesimulation.absnoise = 0.01;
+            
+            cfg.ft_timelockanalysis.covariance = 'yes';
+            cfg.ft_timelockanalysis.covariancewindow = 'all';
+            cfg.ft_timelockanalysis.keeptrials = 'no';
+            cfg.ft_timelockanalysis.removemean = 'yes';
             
             [testdir,~,~] = fileparts(mfilename('fullpath'));
             
@@ -44,22 +72,26 @@ classdef TestDipoleSim < matlab.unittest.TestCase
     methods (Test)
         function test_constructor1(testCase)
            a = ftb.DipoleSim(testCase.params, testCase.name);
-           testCase.verifyEqual(a.prefix,'L');
+           testCase.verifyEqual(a.prefix,'DS');
            testCase.verifyEqual(a.name,testCase.name);
            testCase.verifyEqual(a.prev,[]);
-           testCase.verifyTrue(isfield(a.config, 'ft_prepare_leadfield'));
+           testCase.verifyTrue(isfield(a.config, 'ft_dipolesimulation'));
+           testCase.verifyTrue(isfield(a.config, 'ft_timelockanalysis'));
            testCase.verifyEqual(a.init_called,false);
-           testCase.verifyTrue(isempty(a.leadfield));
+           testCase.verifyTrue(isempty(a.simulated));
+           testCase.verifyTrue(isempty(a.timelock));
         end
         
         function test_constructor2(testCase)
            a = ftb.DipoleSim(testCase.paramfile, testCase.name);
-           testCase.verifyEqual(a.prefix,'L');
+           testCase.verifyEqual(a.prefix,'DS');
            testCase.verifyEqual(a.name,testCase.name);
            testCase.verifyEqual(a.prev,[]);
-           testCase.verifyTrue(isfield(a.config, 'signal'));
+           testCase.verifyTrue(isfield(a.config, 'ft_dipolesimulation'));
+           testCase.verifyTrue(isfield(a.config, 'ft_timelockanalysis'));
            testCase.verifyEqual(a.init_called,false);
-           testCase.verifyTrue(isempty(a.leadfield));
+           testCase.verifyTrue(isempty(a.simulated));
+           testCase.verifyTrue(isempty(a.timelock));
         end
         
         function test_init1(testCase)
@@ -73,17 +105,20 @@ classdef TestDipoleSim < matlab.unittest.TestCase
             a = ftb.DipoleSim(testCase.params, testCase.name);
             a.init(testCase.out_folder);
             testCase.verifyEqual(a.init_called,true);
-            testCase.verifyTrue(~isempty(a.leadfield));
+            testCase.verifyTrue(~isempty(a.simulated));
+            testCase.verifyTrue(~isempty(a.timelock));
         end
         
         function test_init3(testCase)
             % check that get_name is used inside init
             a = ftb.DipoleSim(testCase.params, testCase.name);
-            a.add_prev(ftb.tests.create_test_elec());
+            a.add_prev(ftb.tests.create_test_leadfield());
             n = a.get_name();
             a.init(testCase.out_folder);
             
-            [pathstr,~,~] = fileparts(a.leadfield);
+            [pathstr,~,~] = fileparts(a.simulated);
+            testCase.verifyEqual(pathstr, fullfile(testCase.out_folder,n));
+            [pathstr,~,~] = fileparts(a.timelock);
             testCase.verifyEqual(pathstr, fullfile(testCase.out_folder,n));
         end
         
@@ -91,7 +126,7 @@ classdef TestDipoleSim < matlab.unittest.TestCase
             a = ftb.DipoleSim(testCase.params, testCase.name);
             testCase.verifyEqual(a.prev,[]);
             
-            a.add_prev(ftb.tests.create_test_elec());
+            a.add_prev(ftb.tests.create_test_leadfield());
             testCase.verifyTrue(isa(a.prev,'ftb.Leadfield'));
             testCase.verifyTrue(isfield(a.prev.config, 'ft_prepare_leadfield'));
         end
@@ -104,7 +139,7 @@ classdef TestDipoleSim < matlab.unittest.TestCase
         
         function test_get_name2(testCase)
             a = ftb.DipoleSim(testCase.params, testCase.name);
-            e = ftb.tests.create_test_elec();
+            e = ftb.tests.create_test_leadfield();
             a.add_prev(e);
             n = a.get_name();
             testCase.verifyEqual(n, ['L' e.name '-DS' testCase.name]);

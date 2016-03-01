@@ -4,7 +4,8 @@ classdef DipoleSim < ftb.AnalysisStep
     
     properties(SetAccess = private);
         config;
-        leadfield;
+        simulated;
+        timelock;
     end
     
     methods
@@ -25,7 +26,7 @@ classdef DipoleSim < ftb.AnalysisStep
             parse(p,params,name);
             
             % set vars
-            obj@ftb.AnalysisStep('L');
+            obj@ftb.AnalysisStep('DS');
             obj.name = p.Results.name;
             
             if isstruct(p.Results.params)
@@ -37,17 +38,18 @@ classdef DipoleSim < ftb.AnalysisStep
                 obj.config = din.cfg;
             end
             
-            obj.leadfield = '';
+            obj.simulated = '';
+            obj.timelock = '';
         end
         
         function obj = add_prev(obj,prev)
             
             % parse inputs
             p = inputParser;
-            addRequired(p,'prev',@(x)isa(x,'ftb.Electrodes'));
+            addRequired(p,'prev',@(x)isa(x,'ftb.Leadfield'));
             parse(p,prev);
             
-            % set the previous step, aka Electrodes
+            % set the previous step, aka Leadfield
             obj.prev = p.Results.prev;
         end
         
@@ -71,7 +73,8 @@ classdef DipoleSim < ftb.AnalysisStep
             end            
             
             % set up file names
-            obj.leadfield = fullfile(out_folder2, 'leadfield.mat');
+            obj.simulated = fullfile(out_folder2, 'simulated.mat');
+            obj.timelock = fullfile(out_folder2, 'timelock.mat');
             
             obj.init_called = true;
         end
@@ -83,48 +86,44 @@ classdef DipoleSim < ftb.AnalysisStep
             end
             
             % get analysis step objects
-            elecObj = obj.prev;
+            lfObj = obj.prev;
+            elecObj = lfObj.prev;
             hmObj = elecObj.prev;
             
-            if isfield(obj.config, 'ft_prepare_sourcemodel')
-                cfgin = obj.config.ft_prepare_sourcemodel;
-                cfgin.vol = ftb.util.loadvar(hmObj.mri_headmodel);
-                %     cfgin.hdmfile = cfghm.files.mri_headmodel;
-                % Set up the source model
-                grid = ft_prepare_sourcemodel(cfgin);
-                % Add to leadfield config
-                obj.config.ft_prepare_leadfield.grid = grid;
-                % NOTE
-                % Doens't work, volume surface defaults to skin, no option for
-                % ft_prepare_sourcemodel to change it
+            if ~exist(obj.simulated, 'file') || obj.force
+                % setup cfg
+                cfgin = obj.config.ft_dipolesimulation;
+                cfgin.elecfile = elecObj.elec_aligned;
+                cfgin.headmodel = hmObj.mri_headmodel;
+                
+                % simulate dipoles
+                data = ft_dipolesimulation(cfgin);
+                save(obj.simulated, 'data');
+            else
+                fprintf('%s: skipping ft_dipolesimulation, already exists\n',...
+                    mfilename);
             end
             
-            cfgin = obj.config.ft_prepare_leadfield;
-            cfgin.elecfile = elecObj.elec_aligned;
-            cfgin.hdmfile = hmObj.mri_headmodel;
-            if ~exist(obj.leadfield,'file') || obj.force
+            if ~exist(obj.timelock, 'file') || obj.force
+                cfgin = obj.config.ft_timelockanalysis;
+                cfgin.inputfile = obj.simulated;
+                cfgin.outputfile = obj.timelock;
                 
-                % TODO remove fiducial channels in electrode stage
-                if ~isfield(cfgin, 'channel')
-                    % Remove fiducial channels
-                    elec = ftb.util.loadvar(cfgin.elecfile);
-                    cfgin.channel = ft_channelselection(...
-                        {'all','-FidNz','-FidT9','-FidT10'}, elec.label);
-                end
-                
-                % Compute leadfield
-                leadfield = ft_prepare_leadfield(cfgin);
-                save(obj.leadfield, 'leadfield');
+                ft_timelockanalysis(cfgin);
             else
-                fprintf('%s: skipping ft_prepare_leadfield, already exists\n',mfilename);
+                fprintf('%s: skipping ft_timelockanalysis, already exists\n',...
+                    mfilename);
             end
+            
+
         end
         
         function plot(obj, elements)
             %   elements
             %       cell array of head model elements to be plotted:
-            %       'leadfield'
+            %       'dipole'
             %       can also include elements from previous stages
+            %       'leadfield'
             %       'electrodes'
             %       'electrodes-aligned'
             %       'electrodes-labels'
@@ -138,20 +137,37 @@ classdef DipoleSim < ftb.AnalysisStep
             for i=1:length(elements)
                 switch elements{i}
                     
-                    case 'leadfield'
+                    case 'dipole'
                         hold on;
                         
-                        % Load data
-                        lf = ftb.util.loadvar(obj.leadfield);
+                        component = 'signal';
                         
-                        % Convert to mm
-                        lf = ft_convert_units(lf, unit);
+                        switch component
+                            case 'signal'
+                                color = 'blue';
+                            case 'interference'
+                                color = 'red';
+                            otherwise
+                        end
                         
-                        % Plot inside points
-                        plot3(...
-                            lf.pos(lf.inside,1),...
-                            lf.pos(lf.inside,2),...
-                            lf.pos(lf.inside,3), 'k.');
+                        params = obj.config.ft_dipolesimulation;
+                        if isfield(params, 'dip')
+                            dip = params.dip;
+                            if ~isequal(dip.unit, unit)
+                                switch dip.unit
+                                    case 'cm'
+                                        dip.pos = dip.pos*10;
+                                    otherwise
+                                        error(['ftb:' mfilename],...
+                                            'implement unit %s', dip.unit);
+                                end
+                            end
+                            ft_plot_dipole(dip.pos, dip.mom,...
+                                ...'diameter',5,...
+                                ...'length', 10,...
+                                'color', color,...
+                                'unit', unit);
+                        end
                 end
             end
             
@@ -160,7 +176,7 @@ classdef DipoleSim < ftb.AnalysisStep
                 obj.prev.plot(elements);
             end
         end
-    
+        
     end
 end
 

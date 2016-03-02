@@ -64,6 +64,8 @@ analysis.add(dsim);
 % dsim.plot({'brain','skull','scalp','fiducials','dipole'});
 
 analysis.add(bf);
+analysis.init();
+analysis.process();
 
 figure;
 bf.plot({'brain','skull','scalp','fiducials','dipole'});

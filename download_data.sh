@@ -6,7 +6,7 @@ if [ ! -d "$DESTDIR" ]; then
 fi
 
 TMPFILE=`mktemp`
-TESTFILE=https://github.com/pchrapka/fieldtrip-beamforming/blob/master/README.m
+TESTFILE=http://www.colorado.edu/conflict/peace/download/peace.zip
 wget $TESTFILE -O $TMPFILE
 #wget ftp://ftp.fieldtriptoolbox.org/pub/fieldtrip/tutorial/Subject01.zip -O $TMPFILE
 unzip -d $DESTDIR/Subject01 $TMPFILE

@@ -1,27 +1,26 @@
 %% fb_install.m
 
+% switch to project folder
+curdir = pwd;
+[srcdir,~,~] = fileparts(mfilename('fullpath'));
+if ~isequal(curdir,srcdir)
+    cd(srcdir);
+end
+
 % Get the user's Matlab directory
 matlab_dir = userpath;
 matlab_dir = matlab_dir(1:end-1);
 
 %% Add packages to the Matlab path
 
-%% Add fieldtrip-beamforming
-cur_file = mfilename('fullpath');
-[pkg_path,~,~] = fileparts(cur_file);
-addpath(pkg_path);
-addpath(fullfile(pkg_path,'configs'));
-% TODO create config mat files? or save to git?
+% add fieldtrip-beamforming
+addpath(pwd);
+addpath(fullfile(pwd,'configs'));
+addpath(fullfile(pwd,'ft_extensions'));
 
-%% Add fieldtrip-beamforming external packages
-% Add phasereset
-addpath(fullfile(pkg_path,'external','phasereset'));
-
-% Add PSOM
-% dep_path = fullfile(matlab_dir,'psom-1.0.2');
-% addpath(dep_path);
-
-%% Add fieldtrip
+% add fieldtrip-beamforming external packages
+addpath(fullfile(pwd,'external'));
+addpath(fullfile(pwd,'external','phasereset'));    % add phasereset
 
 % Add fieldtrip
 % dep_path = fullfile(matlab_dir,'fieldtrip-20150127');
@@ -43,4 +42,6 @@ addpath(newpath);
 
 % TODO wget anatomy data, or is it available in fieldtrip?
 
-%clear all;
+% return to working dir
+cd(curdir);
+clear all;

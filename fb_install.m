@@ -44,4 +44,3 @@ addpath(newpath);
 
 % return to working dir
 cd(curdir);
-clear all;

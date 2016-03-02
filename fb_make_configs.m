@@ -14,3 +14,6 @@ for i=1:length(files)
     script = strrep(files(i).name, '.m', '');
     eval(script);
 end
+
+% return to pwd
+cd(curdir);

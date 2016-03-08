@@ -225,7 +225,7 @@ classdef Electrodes < ftb.AnalysisStep
             % load head model obj
             hmObj = obj.prev;
             % load mri obj
-            mriObj = hmOjb.prev;
+            mriObj = hmObj.prev;
             
             % Load MRI data
             if isprop(mriObj, 'mri_mat')

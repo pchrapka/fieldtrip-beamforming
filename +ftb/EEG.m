@@ -162,7 +162,6 @@ classdef EEG < ftb.AnalysisStep
             switch mode
                 case 'timelock'
                     eObj = obj.get_dep('ftb.Electrodes');
-                    %cfg.layout = ftb.util.loadvar(eObj.elec_aligned);
                     cfg.elecfile = eObj.elec_aligned;
                     layout = ft_prepare_layout(cfg,[]);
                     
@@ -171,10 +170,11 @@ classdef EEG < ftb.AnalysisStep
                     %cfg.hlim = [0 1];
                     cfg.layout = layout;
                     cfg.showlabels = 'yes';
-                    %ft_singleplotER(cfg, data);
                     ft_multiplotER(cfg, data);
+                    
                 case 'preprocessed'
-                    error('needs implementation');
+                    
+                    ft_databrowser([],ftb.util.loadvar(eeg.preprocessed));
                 otherwise
                     error(['ftb:' mfilename],...
                         'unknown mode %s',mode);

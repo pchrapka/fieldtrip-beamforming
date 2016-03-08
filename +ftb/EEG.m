@@ -145,6 +145,7 @@ classdef EEG < ftb.AnalysisStep
 %                 switch elements{i}
 %                     
 %                     case 'dipole'
+
 %                 end
 %             end
             
@@ -159,6 +160,19 @@ classdef EEG < ftb.AnalysisStep
             %       selects data to plot: 'preprocessed'
             
             switch mode
+                case 'timelock'
+                    eObj = obj.get_dep('ftb.Electrodes');
+                    %cfg.layout = ftb.util.loadvar(eObj.elec_aligned);
+                    cfg.elecfile = eObj.elec_aligned;
+                    layout = ft_prepare_layout(cfg,[]);
+                    
+                    data = ftb.util.loadvar(obj.timelock);
+                    cfg = [];
+                    %cfg.hlim = [0 1];
+                    cfg.layout = layout;
+                    cfg.showlabels = 'yes';
+                    %ft_singleplotER(cfg, data);
+                    ft_multiplotER(cfg, data);
                 case 'preprocessed'
                     error('needs implementation');
                 otherwise

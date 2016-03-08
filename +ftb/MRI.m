@@ -139,11 +139,7 @@ classdef MRI < ftb.AnalysisStep
             % extracts fiducials from mri
             
             % Load MRI data
-            if isprop(mriObj, 'mri_mat')
-                mri = ftb.util.loadvar(obj.mri_mat);
-            else
-                mri = ft_read_mri(obj.mri_data);
-            end
+            mri = ftb.util.loadvar(obj.mri_mat);
             
             % get fiducials
             transm = mri.transform;

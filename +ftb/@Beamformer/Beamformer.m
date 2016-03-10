@@ -138,6 +138,7 @@ classdef Beamformer < ftb.AnalysisStep
         
         plot_anatomical(obj,varargin);
         plot_scatter(obj,cfg);
+        plot_moment(obj,varargin);
     end
 end
 

@@ -39,6 +39,8 @@ classdef EEGPrePost < ftb.EEG
             
             % set the previous step
             obj.prev = p.Results.prev;
+            obj.pre.prev = p.Results.prev;
+            obj.post.prev = p.Results.prev;
         end
         
         function obj = init(obj,out_folder)
@@ -68,15 +70,9 @@ classdef EEGPrePost < ftb.EEG
             % process main object, i.e. process entire segment
             process@ftb.EEG(obj);
             
-            % check restarts
-            %force_deps = obj.check_deps();
-            %restart = obj.force || force_deps;
-            
             % process pre
-            %obj.pre.force = restart;
             obj.process_redefine(obj.pre);
             % process post
-            %obj.post.force = restart;
             obj.process_redefine(obj.post);
             
         end

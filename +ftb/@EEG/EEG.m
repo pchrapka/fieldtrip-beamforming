@@ -2,7 +2,7 @@ classdef EEG < ftb.AnalysisStep
     %EEG Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties(SetAccess = private)
+    properties(SetAccess = protected)
         config;
         definetrial;
         preprocessed;

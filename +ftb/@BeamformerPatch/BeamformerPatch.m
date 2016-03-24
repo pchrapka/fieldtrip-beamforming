@@ -8,6 +8,11 @@ classdef BeamformerPatch < ftb.Beamformer
         patches; % patch file
     end
     
+    methods (Static, Access = private)
+        [source, patches] = beamformer_lcmv_patch(...
+            data, leadfield, atlasfile, patches, varargin);
+    end
+    
     methods
         function obj = BeamformerPatch(params,name)
             %   params (struct or string)
@@ -76,10 +81,11 @@ classdef BeamformerPatch < ftb.Beamformer
                 % load data
                 data = ftb.util.loadvar(eegObj.timelock);
                 leadfield = ftb.util.loadvar(lfObj.leadfield);
-                patches = get_patches_aal(obj.config.atlas_file);
+                patches = ftb.patches.get_aal_coarse(obj.config.atlas_file);
+                % FIXME this shouldn't be so specific
                 
                 % computer filters
-                [source, patches] = beamformer_lcmv_patch(...
+                [source, patches] = ftb.BeamformerPatch.beamformer_lcmv_patch(...
                     data, leadfield, obj.config.atlas_file, patches);
                 
                 % save filters

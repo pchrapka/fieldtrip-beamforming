@@ -94,6 +94,9 @@ classdef BeamformerPatch < ftb.Beamformer
                 save(obj.lf.leadfield, 'leadfield');
                 % save patches
                 save(obj.patches, 'patches');
+            else
+                fprintf('%s: skipping beamformer_lcmv_patch, already exists\n',...
+                    strrep(class(obj),'ftb.',''));
             end
             
             % process source analysis

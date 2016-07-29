@@ -45,22 +45,26 @@ classdef BeamformerPatch < ftb.Beamformer
             obj.patches = '';
         end
         
-        function obj = init(obj,out_folder)
+        function obj = init(obj,analysis_folder)
             
             % call Beamformer init on main object
-            init@ftb.Beamformer(obj,out_folder);
+            init@ftb.Beamformer(obj,analysis_folder);
             
-            % create folder for analysis step, name accounts for dependencies
-            out_folder2 = fullfile(out_folder, obj.get_name());
-            if ~exist(out_folder2,'dir')
-                mkdir(out_folder2)
-            end        
+%             % create folder for analysis step, name accounts for dependencies
+%             out_folder2 = fullfile(analysis_folder, obj.get_name());
+%             if ~exist(out_folder2,'dir')
+%                 mkdir(out_folder2)
+%             end        
             
             % init Leadfield object
-            obj.lf.init(out_folder2);
+            obj.lf.init(obj.folder);
             
-            % set up file names
-            obj.patches = fullfile(out_folder2, 'patches.mat');
+            % init output folder and files
+            [obj.patches] = obj.init_output(analysis_folder,...
+                'properties',{'patches'});
+            
+%             % set up file names
+%             obj.patches = fullfile(out_folder2, 'patches.mat');
             
             obj.init_called = true;
         end

@@ -53,26 +53,13 @@ classdef Beamformer < ftb.AnalysisStep
         end
         
         function obj = init(obj,analysis_folder)
-            
-%             % parse inputs
-%             p = inputParser;
-%             addOptional(p,'out_folder','',@ischar);
-%             parse(p,out_folder);
-%             
-%             % check inputs
-%             if isempty(out_folder)
-%                 error(['ftb:' mfilename],...
-%                     'please specify an output folder');
-%             end
-%             
-%             % create folder for analysis step, name accounts for dependencies
-%             out_folder2 = fullfile(out_folder, obj.get_name());
-%             if ~exist(out_folder2,'dir')
-%                 mkdir(out_folder2)
-%             end            
-%             
-%             % set up file names
-%             obj.sourceanalysis = fullfile(out_folder2, 'sourceanalysis.mat');
+            %INIT initializes the output files
+            %   INIT(analysis_folder)
+            %
+            %   Input
+            %   -----
+            %   analysis_folder (string)
+            %       root folder for the analysis output
             
             % init output folder and files
             [obj.sourceanalysis] = obj.init_output(analysis_folder,...

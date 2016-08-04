@@ -20,7 +20,7 @@ if obj.check_file(obj.preprocessed)
     
     % preprocess data
     data = ft_preprocessing(cfg);
-    save(obj.preprocessed, 'data');
+    save(obj.preprocessed, 'data','-v7.3');
 else
     fprintf('%s: skipping ft_preprocessing, already exists\n',...
         strrep(class(obj),'ftb.',''));

@@ -82,7 +82,7 @@ classdef BeamformerPatch < ftb.Beamformer
             
             % create leadfield object
             obj.lf = ftb.Leadfield(obj.config,'patchfilt');
-            obj.eeg = ftb.EEG(obj.config,'eegmod');
+            obj.eeg = ftb.EEG(obj.config,'modtimelock');
             
             obj.patches = '';
         end
@@ -159,10 +159,9 @@ classdef BeamformerPatch < ftb.Beamformer
                     timelock = ftb.util.loadvar(eegObj.timelock);
                     
                     [out_folder,~,~] = fileparts(obj.eeg.timelock);
-                    params = [];
-                    params.ft_definetrial = [];
+                    data = [];
                     fake_file = fullfile(out_folder, 'fake.mat');
-                    save(fake_file,'params');
+                    save(fake_file,'data');
                     
                     obj.eeg.load_file('definetrial',fake_file);
                     obj.eeg.load_file('redefinetrial',fake_file);

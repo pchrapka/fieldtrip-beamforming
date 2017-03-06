@@ -17,6 +17,7 @@ classdef PatchModel < handle
             p = inputParser();
             addRequired(p,'modelname',@ischar);
             addParameter(p,'params',{},@iscell);
+            addParameter(p,'sphere_patch',{},@iscell);
             parse(p,modelname,varargin{:});
             
             obj.atlasfile = '';
@@ -32,6 +33,25 @@ classdef PatchModel < handle
                 otherwise
                     error('unknown cortical patch config: %s\n',modelname);
             end
+            
+            if ~isempty(p.Results.sphere_patch)
+                if iscell(p.Results.sphere_patch{1})
+                    % multiple sphere patches
+                    npatches = length(p.Results.sphere_patch);
+                    params = p.Results.sphere_patch;
+                else
+                    npatches = 1;
+                    params = {p.Results.sphere_patch};
+                end
+                
+                
+                for i=1:npatches
+                    params_cur = params{i};
+                    
+                    patch = PatchSphere(params_cur{:});
+                    obj.add_patch(patch);
+                end
+            end
         end         
         
         function obj = get_basis(obj,leadfield,varargin)
@@ -40,6 +60,9 @@ classdef PatchModel < handle
             atlas = ft_read_atlas(obj.atlasfile);
             % make sure units are consistent
             atlas = ft_convert_units(atlas,leadfield.unit);
+            
+            % TODO deal with spherical patches, need to make the rest of
+            % the bases mutually exclusive
             
             npatches = length(obj.patches);
             for i=1:npatches

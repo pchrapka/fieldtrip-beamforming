@@ -40,11 +40,7 @@ atlas = ft_convert_units(atlas,leadfield.unit);
 debug = false;
 
 % select grid points in anatomical regions that make up the patch
-cfg = [];
-cfg.atlas = atlas;
-cfg.roi = obj.labels;
-cfg.inputcoord = 'mni';
-mask = ft_volumelookup(cfg, leadfield);
+mask = obj.get_mask(atlas,leadfield);
 obj.inside = leadfield.inside & mask(:);
 
 if debug

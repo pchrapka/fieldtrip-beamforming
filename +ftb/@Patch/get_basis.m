@@ -1,4 +1,4 @@
-function patches = get_basis(obj, atlas, leadfield, varargin)
+function mask = get_basis(obj, atlas, leadfield, varargin)
 %GET_BASIS returns the basis for each patch
 %   GET_BASIS(patches, leadfield, ...) returns the basis for each patch
 %
@@ -15,6 +15,10 @@ function patches = get_basis(obj, atlas, leadfield, varargin)
 %       representation accuracy, ideally should be close to 1 but it will
 %       also lose its ability to differentiate other patches and resolution
 %       will suffer, see Limpiti2006 for more
+%   mask (matrix)
+%       mask where true values represent restricted leadfield vertices,
+%       i.e. the vertices will not be included in the current patch, same
+%       size as the mask output
 %
 %   Output
 %   ------
@@ -31,6 +35,7 @@ function patches = get_basis(obj, atlas, leadfield, varargin)
 p = inputParser;
 addRequired(p,'atlas',@isstruct);
 addRequired(p,'leadfield',@isstruct);
+addParameter(p,'mask',[],@isnumeric);
 addParameter(p,'eta',0.85);
 parse(p,atlas,leadfield,varargin{:});
 
@@ -41,7 +46,14 @@ debug = false;
 
 % select grid points in anatomical regions that make up the patch
 mask = obj.get_mask(atlas,leadfield);
-obj.inside = leadfield.inside & mask(:);
+if isempty(p.Results.mask)
+    % choose leadfield vertices inside the mask
+    obj.inside = leadfield.inside & mask(:);
+else
+    % choose leadfield vertices inside the mask, but not in the restricted
+    % mask
+    obj.inside = leadfield.inside & mask(:) & ~p.Results.mask(:);
+end
 
 if debug
     figure;

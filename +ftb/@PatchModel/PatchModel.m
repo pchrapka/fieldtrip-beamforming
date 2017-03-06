@@ -56,18 +56,31 @@ classdef PatchModel < handle
         
         function obj = get_basis(obj,leadfield,varargin)
             
+            p = inputParser;
+            addRequired(p,'leadfield',@isstruct);
+            parse(p,leadfield,varargin{:});
+            
             % load the atlas
             atlas = ft_read_atlas(obj.atlasfile);
             % make sure units are consistent
             atlas = ft_convert_units(atlas,leadfield.unit);
             
-            % TODO deal with spherical patches, need to make the rest of
-            % the bases mutually exclusive
+            % set up mask to deal with spherical patches, need to make the
+            % rest of the patches mutually exclusive
+            mask_temp = obj.patches(1).get_basis(atlas, leadfield);
+            mask_sphere = false(size(mask_temp));
+            clear mask_temp;
             
+            % loop through patches
             npatches = length(obj.patches);
             for i=1:npatches
                 % get the basis for each patch
-                obj.patches(i).get_basis(atlas, leadfield);
+                mask = obj.patches(i).get_basis(atlas, leadfield,'mask',mask_sphere);
+                
+                if isa(obj.patches(i),'ftb.PatchSphere')
+                    % add the mask to the sphere mask
+                    mask_sphere = mask_sphere | mask;
+                end
             end
             
         end

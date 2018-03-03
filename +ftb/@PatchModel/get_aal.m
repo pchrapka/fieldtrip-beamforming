@@ -24,7 +24,7 @@ parse(p,varargin{:});
 
 % set up an atlas
 obj.atlasfile = fullfile(ft_get_dir(),'template','atlas','aal','ROI_MNI_V4.nii');
-atlas = ft_read_atlas(atlas_file);
+atlas = ft_read_atlas(obj.atlasfile);
 
 nlabels = length(atlas.tissuelabel);
 

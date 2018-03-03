@@ -69,6 +69,9 @@ source.patch_centroid = zeros(length(leadfield.inside),3);
 ndims_cov = length(size(data.cov));
 if ndims_cov == 3
     ntrials = size(data.cov,1);
+    if ntrials == 1
+        data.cov = squeeze(data.cov);
+    end
 else
     ntrials = 1;
 end

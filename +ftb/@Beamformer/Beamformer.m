@@ -166,7 +166,7 @@ classdef Beamformer < ftb.AnalysisStep
                 %end
                 
                 % source analysis
-                timelock = ftb.util.loadbar(eegObj.timelock);
+                timelock = ftb.util.loadvar(eegObj.timelock);
                 ft_sourceanalysis(cfgin, timelock)
             else
                 fprintf('%s: skipping ft_sourceanalysis, already exists\n',...

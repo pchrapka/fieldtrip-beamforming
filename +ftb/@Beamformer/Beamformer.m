@@ -154,7 +154,8 @@ classdef Beamformer < ftb.AnalysisStep
                         fieldnames(obj.config.ft_sourceanalysis.grid));
                 end
                 
-                cfgin.inputfile = eegObj.timelock;
+                % NOTE causes error in windows
+                %cfgin.inputfile = eegObj.timelock;
                 cfgin.outputfile = obj.sourceanalysis;
                 
                 % NOTE for some reason, at some point before this stage
@@ -165,7 +166,8 @@ classdef Beamformer < ftb.AnalysisStep
                 %end
                 
                 % source analysis
-                ft_sourceanalysis(cfgin)
+                timelock = ftb.util.loadbar(eegObj.timelock);
+                ft_sourceanalysis(cfgin, timelock)
             else
                 fprintf('%s: skipping ft_sourceanalysis, already exists\n',...
                     strrep(class(obj),'ftb.',''));

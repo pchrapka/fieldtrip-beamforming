@@ -24,6 +24,8 @@ classdef PatchModel < handle
             obj.patches = {};
             
             switch modelname
+                case 'aal-coarse-27'
+                    obj.get_aal_coarse_27(p.Results.params{:});
                 case 'aal-coarse-19'
                     obj.get_aal_coarse_19(p.Results.params{:});
                 case 'aal-coarse-13'
@@ -98,6 +100,7 @@ classdef PatchModel < handle
     
     methods (Access = protected)
         
+        obj = get_aal_coarse_27(obj,varargin);
         obj = get_aal_coarse_19(obj,varargin);
         obj = get_aal_coarse_13(obj,varargin);
         
